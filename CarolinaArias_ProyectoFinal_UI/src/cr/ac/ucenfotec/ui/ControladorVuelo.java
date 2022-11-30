@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 
 /**
  * @author Carolina Arias
@@ -71,21 +72,27 @@ public class ControladorVuelo {
      * Metodo para registrar un vuelo
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void registrar (ActionEvent actionEvent) {
-        if(numVueloText.getText().isEmpty() || horaSalidaText.getText().isEmpty() || horaLlegadaText.getText().isEmpty() || estadoCB.getValue() == null || obtenerTipoVuelo().equals("N") || cantAsientosText.getText().isEmpty() || precioText.getText().isEmpty() || impuestoText.getText().isEmpty() || aeropuertoOrigenCB.getValue() == null || aeropuertoDestinoCB.getValue() == null)
-        {
-            showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-        } else {
-            Gestor gestor = new Gestor();
-            Vuelo vuelo = obtenerVuelo();
-            String mensaje = gestor.insertarVuelo(vuelo);
-            if(mensaje.equals("El vuelo fue registrado con éxito."))
+    public void registrar(ActionEvent actionEvent) {
+        try {
+            if(numVueloText.getText().isEmpty() || horaSalidaText.getText().isEmpty() || horaLlegadaText.getText().isEmpty() || estadoCB.getValue() == null || obtenerTipoVuelo().equals("N") || cantAsientosText.getText().isEmpty() || precioText.getText().isEmpty() || impuestoText.getText().isEmpty() || aeropuertoOrigenCB.getValue() == null || aeropuertoDestinoCB.getValue() == null)
             {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                resetearValores();
+                showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                Gestor gestor = new Gestor();
+                Vuelo vuelo = obtenerVuelo();
+                String mensaje = gestor.insertarVuelo(vuelo);
+                if(mensaje.equals("El vuelo fue registrado con éxito."))
+                {
+                    showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                    resetearValores();
+                } else {
+                    showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                }
             }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","Los campos:\n• Número de vuelo\n• Cantidad de asientos disponibles\n• Precio de asientos\n• Monto de impuesto\nSólo aceptan valores numéricos.");
+        } catch (DateTimeParseException dfe) {
+            showAlert(Alert.AlertType.ERROR,"La hora no tiene un formato adecuado.","La hora no tiene un formato adecuado.\nPor favor digítela en el siguiente formato HH:mm (24 horas).");
         }
     }
 
@@ -120,20 +127,26 @@ public class ControladorVuelo {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void actualizarVuelo (ActionEvent actionEvent) {
-        if(numVueloText.getText().isEmpty() || horaSalidaText.getText().isEmpty() || horaLlegadaText.getText().isEmpty() || estadoCB.getValue() == null || obtenerTipoVuelo().equals("N") || cantAsientosText.getText().isEmpty() || precioText.getText().isEmpty() || impuestoText.getText().isEmpty() || aeropuertoOrigenCB.getValue() == null || aeropuertoDestinoCB.getValue() == null)
-        {
-            showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-        } else {
-            Gestor gestor = new Gestor();
-            Vuelo vuelo = obtenerVuelo();
-            String mensaje = gestor.actualizarVuelo(vuelo);
-            if(mensaje.equals("El vuelo fue actualizado con éxito."))
+        try {
+            if(numVueloText.getText().isEmpty() || horaSalidaText.getText().isEmpty() || horaLlegadaText.getText().isEmpty() || estadoCB.getValue() == null || obtenerTipoVuelo().equals("N") || cantAsientosText.getText().isEmpty() || precioText.getText().isEmpty() || impuestoText.getText().isEmpty() || aeropuertoOrigenCB.getValue() == null || aeropuertoDestinoCB.getValue() == null)
             {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaVuelos();
+                showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                Gestor gestor = new Gestor();
+                Vuelo vuelo = obtenerVuelo();
+                String mensaje = gestor.actualizarVuelo(vuelo);
+                if(mensaje.equals("El vuelo fue actualizado con éxito."))
+                {
+                    showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                    cargarListaVuelos();
+                } else {
+                    showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                }
             }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","Los campos:\n• Número de vuelo\n• Cantidad de asientos disponibles\n• Precio de asientos\n• Monto de impuesto\nSólo aceptan valores numéricos.");
+        } catch (DateTimeParseException dfe) {
+            showAlert(Alert.AlertType.ERROR,"La hora no tiene un formato adecuado.","La hora no tiene un formato adecuado.\nPor favor digítela en el siguiente formato HH:mm (24 horas).");
         }
     }
 
@@ -141,7 +154,7 @@ public class ControladorVuelo {
      * Metodo para eliminar un vuelo
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void eliminarVuelo (ActionEvent actionEvent) {
+    public void eliminarVuelo(ActionEvent actionEvent) {
         if(listaVuelos.getSelectionModel().getSelectedItem() == null)
         {
             showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún vuelo.","No ha seleccionado ningún vuelo.\nPor favor seleccione un vuelo para eliminar.");
@@ -199,7 +212,7 @@ public class ControladorVuelo {
     }
 
     /**
-     * Metodo para resetear los valores dem los TextField
+     * Metodo para resetear los valores de los TextField
      */
     public void resetearValores() {
         cargarListaVuelos();

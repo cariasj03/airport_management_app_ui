@@ -15,6 +15,8 @@ import javafx.scene.control.DatePicker;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeParseException;
+
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -53,46 +55,50 @@ public class ControladorAdministrador {
     @FXML
     TableView<Administrador> listaAdministradores;
     @FXML
-    TableColumn<Administrador,String> tId;
+    TableColumn<Administrador, String> tId;
     @FXML
-    TableColumn<Administrador,String> tNombre;
+    TableColumn<Administrador, String> tNombre;
     @FXML
-    TableColumn<Administrador,String> tApellidos;
+    TableColumn<Administrador, String> tApellidos;
     @FXML
     TableColumn<Administrador, LocalDate> tFechaNac;
     @FXML
-    TableColumn<Administrador,String> tGenero;
+    TableColumn<Administrador, String> tGenero;
     @FXML
-    TableColumn<Administrador,String> tNacionalidad;
+    TableColumn<Administrador, String> tNacionalidad;
     @FXML
-    TableColumn<Administrador,String> tCorreo;
+    TableColumn<Administrador, String> tCorreo;
     @FXML
     public ObservableList<Administrador> observableAdministradores;
 
     /**
      * Metodo para registrar un administrador
+     *
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void registrar (ActionEvent actionEvent) {
-        if(idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty())
-        {
-            showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-        } else {
-            Gestor gestor = new Gestor();
-            Administrador administrador = obtenerAdministrador();
-            String mensaje = gestor.insertarAdministrador(administrador);
-            if(mensaje.equals("El administrador fue creado con éxito."))
-            {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                resetearValores();
+    public void registrar(ActionEvent actionEvent) {
+        try {
+            if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                Gestor gestor = new Gestor();
+                Administrador administrador = obtenerAdministrador();
+                String mensaje = gestor.insertarAdministrador(administrador);
+                if (mensaje.equals("El administrador fue creado con éxito.")) {
+                    showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
+                    resetearValores();
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
+                }
             }
+        } catch (DateTimeParseException dfe) {
+            showAlert(Alert.AlertType.ERROR,"La fecha no tiene un formato adecuado.","La fecha no tiene un formato adecuado.\nPor favor digítela con el formato adecuado.");
         }
     }
 
     /**
      * Metodo para obtener los valores de un administrador en los TextField
+     *
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
@@ -109,13 +115,13 @@ public class ControladorAdministrador {
             distritoText.setText(administrador.getDireccion().getDistrito());
             detalleText.setText(administrador.getDireccion().getDetalleDireccion());
             passField.setText(administrador.getContrasena());
-            if(administrador.getGenero().equals("F")) {
+            if (administrador.getGenero().equals("F")) {
                 femeninoRadio.setSelected(true);
             } else {
-                if(administrador.getGenero().equals("M")) {
+                if (administrador.getGenero().equals("M")) {
                     masculinoRadio.setSelected(true);
                 } else {
-                    if(administrador.getGenero().equals("O")) {
+                    if (administrador.getGenero().equals("O")) {
                         otroRadio.setSelected(true);
                     }
                 }
@@ -125,48 +131,45 @@ public class ControladorAdministrador {
 
     /**
      * Metodo para actualizar un administrador
+     *
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void actualizarAdministrador (ActionEvent actionEvent) {
-        if(idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty())
-        {
-            showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
+    public void actualizarAdministrador(ActionEvent actionEvent) {
+        if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
         } else {
             Gestor gestor = new Gestor();
             Administrador administrador = obtenerAdministrador();
             String mensaje = gestor.actualizarAdministrador(administrador);
-            if(mensaje.equals("El administrador fue actualizado con éxito."))
-            {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAdministradores ();
+            if (mensaje.equals("El administrador fue actualizado con éxito.")) {
+                showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
+                cargarListaAdministradores();
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
             }
         }
     }
 
     /**
      * Metodo para eliminar un administrador
+     *
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void eliminarAdministrador (ActionEvent actionEvent) {
-        if(listaAdministradores.getSelectionModel().getSelectedItem() == null)
-        {
-            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún administrador.","No ha seleccionado ningún administrador.\nPor favor seleccione un administrador para eliminar.");
+    public void eliminarAdministrador(ActionEvent actionEvent) {
+        if (listaAdministradores.getSelectionModel().getSelectedItem() == null) {
+            showAlert(Alert.AlertType.ERROR, "No ha seleccionado ningún administrador.", "No ha seleccionado ningún administrador.\nPor favor seleccione un administrador para eliminar.");
         } else {
             Gestor gestor = new Gestor();
             Administrador administrador = (Administrador) listaAdministradores.getSelectionModel().getSelectedItem();
             String mensaje = gestor.eliminarAdministrador(administrador);
-            if(mensaje.equals("El administrador fue eliminado con éxito."))
-            {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAdministradores ();
+            if (mensaje.equals("El administrador fue eliminado con éxito.")) {
+                showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
+                cargarListaAdministradores();
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
             }
         }
     }
-
 
     /**
      * Metodo para obtener los datos de un administrador de los TextField

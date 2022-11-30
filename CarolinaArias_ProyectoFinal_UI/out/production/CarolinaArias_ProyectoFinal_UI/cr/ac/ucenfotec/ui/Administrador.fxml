@@ -56,35 +56,35 @@
          </font>
       </Text>
       <TextField fx:id="idText" layoutX="158.0" layoutY="111.0" prefHeight="26.0" prefWidth="225.0" />
-      <Label layoutX="67.0" layoutY="115.0" text="Identificación: *" />
-      <Label layoutX="93.0" layoutY="147.0" text="Nombre: *" />
       <TextField fx:id="nombreText" layoutX="158.0" layoutY="143.0" prefHeight="26.0" prefWidth="225.0" />
-      <Label layoutX="88.0" layoutY="180.0" text="Apellidos: *" />
       <TextField fx:id="apellidosText" layoutX="158.0" layoutY="176.0" prefHeight="26.0" prefWidth="225.0" />
       <TextField fx:id="nacionalidadText" layoutX="158.0" layoutY="209.0" prefHeight="26.0" prefWidth="225.0" />
-      <Label layoutX="68.0" layoutY="213.0" text="Nacionalidad: *" />
-      <Label layoutX="28.0" layoutY="247.0" text="Fecha de nacimiento: *" />
       <DatePicker fx:id="fechaNacDatePicker" layoutX="158.0" layoutY="242.0" prefHeight="26.0" prefWidth="225.0" />
-      <Label layoutX="98.0" layoutY="283.0" text="Género: *" />
       <RadioButton fx:id="femeninoRadio" layoutX="158.0" layoutY="283.0" mnemonicParsing="false" text="Femenino">
          <toggleGroup>
             <ToggleGroup fx:id="generoToggleGroup" />
          </toggleGroup></RadioButton>
       <RadioButton fx:id="masculinoRadio" layoutX="244.0" layoutY="283.0" mnemonicParsing="false" text="Masculino" toggleGroup="$generoToggleGroup" />
       <RadioButton fx:id="otroRadio" layoutX="332.0" layoutY="283.0" mnemonicParsing="false" text="Otro" toggleGroup="$generoToggleGroup" />
-      <Label layoutX="431.0" layoutY="115.0" text="Correo electrónico: *" />
       <TextField fx:id="correoText" layoutX="548.0" layoutY="111.0" prefHeight="26.0" prefWidth="225.0" />
       <TextField fx:id="provinciaText" layoutX="548.0" layoutY="143.0" prefHeight="26.0" prefWidth="225.0" />
-      <Label layoutX="480.0" layoutY="147.0" text="Provincia: *" />
       <TextField fx:id="cantonText" layoutX="548.0" layoutY="176.0" prefHeight="26.0" prefWidth="225.0" />
-      <Label layoutX="489.0" layoutY="180.0" text="Cantón: *" />
       <TextField fx:id="distritoText" layoutX="549.0" layoutY="209.0" prefHeight="26.0" prefWidth="225.0" />
-      <Label layoutX="489.0" layoutY="213.0" text="Distrito: *" />
       <TextField fx:id="detalleText" layoutX="549.0" layoutY="242.0" prefHeight="26.0" prefWidth="225.0" />
+      <PasswordField fx:id="passField" layoutX="550.0" layoutY="276.0" prefHeight="25.0" prefWidth="225.0" />
+      <Label layoutX="67.0" layoutY="115.0" text="Identificación: *" />
+      <Label layoutX="93.0" layoutY="147.0" text="Nombre: *" />
+      <Label layoutX="88.0" layoutY="180.0" text="Apellidos: *" />
+      <Label layoutX="68.0" layoutY="213.0" text="Nacionalidad: *" />
+      <Label layoutX="28.0" layoutY="247.0" text="Fecha de nacimiento: *" />
+      <Label layoutX="98.0" layoutY="283.0" text="Género: *" />
+      <Label layoutX="431.0" layoutY="115.0" text="Correo electrónico: *" />
+      <Label layoutX="480.0" layoutY="147.0" text="Provincia: *" />
+      <Label layoutX="489.0" layoutY="180.0" text="Cantón: *" />
+      <Label layoutX="489.0" layoutY="213.0" text="Distrito: *" />
       <Label layoutX="466.0" layoutY="247.0" text="Otras señas: *" />
       <Button layoutX="489.0" layoutY="313.0" mnemonicParsing="false" onAction="#registrar" text="Registrar" />
       <Label layoutX="467.0" layoutY="280.0" text="Contraseña: *" />
-      <PasswordField fx:id="passField" layoutX="550.0" layoutY="276.0" prefHeight="25.0" prefWidth="225.0" />
       <TableView fx:id="listaAdministradores" layoutX="28.0" layoutY="356.0" onMousePressed="#dobleClick" prefHeight="166.0" prefWidth="747.0">
         <columns>
           <TableColumn fx:id="tId" prefWidth="86.0" text="Identificación" />

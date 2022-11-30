@@ -41,10 +41,6 @@ public class ControladorAeropuerto {
 
 
     public void registrar (ActionEvent actionEvent) {
-        String nombre = nombreText.getText();
-        String codigo = codigoText.getText().toUpperCase();
-
-
         if (nombreText.getText().isEmpty() || codigoText.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             return;
@@ -54,7 +50,7 @@ public class ControladorAeropuerto {
                 return;
             } else {
                 Gestor gestor = new Gestor();
-                Aeropuerto aeropuerto = new Aeropuerto(nombre, codigo);
+                Aeropuerto aeropuerto = obtenerAeropuerto();
                 String mensaje = gestor.insertarAeropuerto(aeropuerto);
                 if (mensaje.equals("El aeropuerto fue registrado con éxito.")) {
                     showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);

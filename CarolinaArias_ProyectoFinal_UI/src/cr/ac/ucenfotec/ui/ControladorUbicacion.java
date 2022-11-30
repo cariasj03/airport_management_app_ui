@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 
 /**
  * @author Carolina Arias
@@ -43,20 +44,24 @@ public class ControladorUbicacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void registrar (ActionEvent actionEvent) {
-        if(codigoText.getText().isEmpty() || nivelText.getText().isEmpty())
-        {
-            showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-        } else {
-            Gestor gestor = new Gestor();
-            Ubicacion ubicacion = obtenerUbicacion();
-            String mensaje = gestor.insertarUbicacion(ubicacion);
-            if(mensaje.equals("La ubicación fue registrada con éxito."))
+        try {
+            if(codigoText.getText().isEmpty() || nivelText.getText().isEmpty())
             {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                resetearValores();
+                showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                Gestor gestor = new Gestor();
+                Ubicacion ubicacion = obtenerUbicacion();
+                String mensaje = gestor.insertarUbicacion(ubicacion);
+                if(mensaje.equals("La ubicación fue registrada con éxito."))
+                {
+                    showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                    resetearValores();
+                } else {
+                    showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                }
             }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","El campo nivel sólo acepta valores numéricos.");
         }
     }
 
@@ -77,20 +82,24 @@ public class ControladorUbicacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void actualizarUbicacion (ActionEvent actionEvent) {
-        if(codigoText.getText().isEmpty() || nivelText.getText().isEmpty())
-        {
-            showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-        } else {
-            Gestor gestor = new Gestor();
-            Ubicacion ubicacion = obtenerUbicacion();
-            String mensaje = gestor.actualizarUbicacion(ubicacion);
-            if(mensaje.equals("La ubicación fue actualizada con éxito."))
+        try {
+            if(codigoText.getText().isEmpty() || nivelText.getText().isEmpty())
             {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaUbicaciones();
+                showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                Gestor gestor = new Gestor();
+                Ubicacion ubicacion = obtenerUbicacion();
+                String mensaje = gestor.actualizarUbicacion(ubicacion);
+                if(mensaje.equals("La ubicación fue actualizada con éxito."))
+                {
+                    showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                    cargarListaUbicaciones();
+                } else {
+                    showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                }
             }
+        } catch (NumberFormatException e) {
+        showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","El campo nivel sólo acepta valores numéricos.");
         }
     }
 
@@ -99,21 +108,21 @@ public class ControladorUbicacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void eliminarUbicacion (ActionEvent actionEvent) {
-        if(listaUbicaciones.getSelectionModel().getSelectedItem() == null)
-        {
-            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna ubicación.","No ha seleccionado ninguna ubicación.\nPor favor seleccione una ubicación para eliminar.");
-        } else {
-            Gestor gestor = new Gestor();
-            Ubicacion ubicacion = (Ubicacion) listaUbicaciones.getSelectionModel().getSelectedItem();
-            String mensaje = gestor.eliminarUbicacion(ubicacion);
-            if(mensaje.equals("La ubicación fue eliminada con éxito."))
+            if(listaUbicaciones.getSelectionModel().getSelectedItem() == null)
             {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaUbicaciones();
+                showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna ubicación.","No ha seleccionado ninguna ubicación.\nPor favor seleccione una ubicación para eliminar.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                Gestor gestor = new Gestor();
+                Ubicacion ubicacion = (Ubicacion) listaUbicaciones.getSelectionModel().getSelectedItem();
+                String mensaje = gestor.eliminarUbicacion(ubicacion);
+                if(mensaje.equals("La ubicación fue eliminada con éxito."))
+                {
+                    showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                    cargarListaUbicaciones();
+                } else {
+                    showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                }
             }
-        }
     }
 
     /**
