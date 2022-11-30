@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.ucenfotec.ui.ControladorUbicacion">
+   <children>
+      <ToolBar prefHeight="61.0" prefWidth="802.0">
+         <items>
+            <Button mnemonicParsing="false" onAction="#inicio" text="Inicio">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#administradores" text="Administradores">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" text="Aeropuertos">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#vuelos" text="Vuelos">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" text="Ubicaciones">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#salir" text="Salir">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+         </items>
+      </ToolBar>
+      <Text layoutX="213.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registro de ubicaciones" textAlignment="CENTER" wrappingWidth="376.7825012207031">
+         <font>
+            <Font name="Arial Black" size="20.0" />
+         </font>
+      </Text>
+      <Label layoutX="101.0" layoutY="128.0" text="Código: *" />
+      <Label layoutX="112.0" layoutY="168.0" text="Nivel: *" />
+      <TextField fx:id="codigoText" layoutX="163.0" layoutY="123.0" prefHeight="26.0" prefWidth="566.0" />
+      <TextField fx:id="nivelText" layoutX="163.0" layoutY="163.0" prefHeight="26.0" prefWidth="566.0" />
+      <Button layoutX="481.0" layoutY="220.0" mnemonicParsing="false" onAction="#registrar" text="Registrar" />
+      <TableView fx:id="listaUbicaciones" layoutX="76.0" layoutY="282.0" onMousePressed="#dobleClick" prefHeight="217.0" prefWidth="650.0">
+        <columns>
+          <TableColumn fx:id="tCodigo" prefWidth="324.0" text="Codigo" />
+          <TableColumn fx:id="tNivel" prefWidth="324.0" text="Nivel" />
+        </columns>
+      </TableView>
+      <Button layoutX="367.0" layoutY="220.0" mnemonicParsing="false" onAction="#actualizarUbicacion" text="Actualizar" />
+      <Button layoutX="245.0" layoutY="220.0" mnemonicParsing="false" onAction="#resetearValores" text="Borrar datos" />
+      <Button layoutX="372.0" layoutY="533.0" mnemonicParsing="false" onAction="#eliminarUbicacion" text="Eliminar" />
+      <Label layoutX="76.0" layoutY="499.0" text="? = Puede dar doble click a un registro de la tabla para actualizarlo más fácilmente.">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
