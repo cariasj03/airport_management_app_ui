@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.ucenfotec.ui.ControladorAeropuerto">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.ucenfotec.ui.ControladorPuerta">
    <children>
       <ToolBar prefHeight="39.0" prefWidth="802.0">
          <items>
@@ -45,7 +45,7 @@
                   <Font size="10.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" text="Aeropuertos">
+            <Button mnemonicParsing="false" onAction="#aeropuertos" text="Aeropuertos">
                <font>
                   <Font size="10.0" />
                </font>
@@ -60,7 +60,7 @@
                   <Font size="10.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#puertas" text="Puertas">
+            <Button mnemonicParsing="false" text="Puertas">
                <font>
                   <Font size="10.0" />
                </font>
@@ -72,31 +72,31 @@
             </Button>
          </items>
       </ToolBar>
-      <Text layoutX="213.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registro de aeropuertos" textAlignment="CENTER" wrappingWidth="376.7825012207031">
+      <Text layoutX="213.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registro de puertas" textAlignment="CENTER" wrappingWidth="376.7825012207031">
          <font>
             <Font name="Arial Black" size="20.0" />
          </font>
       </Text>
-      <TextField fx:id="nombreText" layoutX="149.0" layoutY="104.0" prefHeight="26.0" prefWidth="566.0" />
-      <Label layoutX="87.0" layoutY="109.0" text="Nombre: *" />
-      <Label layoutX="93.0" layoutY="142.0" text="Código: *" />
-      <TextField fx:id="codigoText" layoutX="149.0" layoutY="137.0" prefHeight="26.0" prefWidth="566.0" />
+      <TextField fx:id="nombreText" layoutX="149.0" layoutY="130.0" prefHeight="26.0" prefWidth="566.0" />
+      <Label layoutX="87.0" layoutY="135.0" text="Nombre: *" />
+      <Label layoutX="92.0" layoutY="100.0" text="Código: *" />
+      <TextField fx:id="codigoText" layoutX="149.0" layoutY="95.0" prefHeight="26.0" prefWidth="566.0" />
       <Button layoutX="481.0" layoutY="220.0" mnemonicParsing="false" onAction="#registrar" text="Registrar" />
-      <TableView fx:id="listaAeropuertos" layoutX="76.0" layoutY="282.0" onMousePressed="#dobleClick" prefHeight="217.0" prefWidth="650.0">
+      <TableView fx:id="listaPuertas" layoutX="76.0" layoutY="282.0" onMousePressed="#dobleClick" prefHeight="217.0" prefWidth="650.0">
         <columns>
-          <TableColumn fx:id="tNombre" prefWidth="437.5999526977539" text="Nombre" />
-          <TableColumn fx:id="tCodigo" prefWidth="208.79998779296875" text="Codigo" />
+          <TableColumn fx:id="tCodigo" prefWidth="217.60004425048828" text="Codigo" />
+          <TableColumn fx:id="tNombre" prefWidth="431.20001831054685" text="Nombre" />
         </columns>
       </TableView>
-      <Button layoutX="367.0" layoutY="220.0" mnemonicParsing="false" onAction="#actualizarAeropuerto" text="Actualizar" />
+      <Button layoutX="367.0" layoutY="220.0" mnemonicParsing="false" onAction="#actualizarPuerta" text="Actualizar" />
       <Button layoutX="245.0" layoutY="220.0" mnemonicParsing="false" onAction="#resetearValores" text="Borrar datos" />
-      <Button layoutX="372.0" layoutY="533.0" mnemonicParsing="false" onAction="#eliminarAeropuerto" text="Eliminar" />
+      <Button layoutX="372.0" layoutY="533.0" mnemonicParsing="false" onAction="#eliminarPuerta" text="Eliminar" />
       <Label layoutX="76.0" layoutY="499.0" text="? = Puede dar doble click a un registro de la tabla para actualizarlo más fácilmente.">
          <font>
             <Font size="10.0" />
          </font>
       </Label>
-      <ComboBox fx:id="paisCB" layoutX="149.0" layoutY="170.0" prefHeight="26.0" prefWidth="566.0" />
-      <Label layoutX="110.0" layoutY="175.0" text="País: *" />
+      <ComboBox fx:id="ubicacionCB" layoutX="149.0" layoutY="166.0" prefHeight="26.0" prefWidth="566.0" />
+      <Label layoutX="78.0" layoutY="170.0" text="Ubicación: *" />
    </children>
 </AnchorPane>

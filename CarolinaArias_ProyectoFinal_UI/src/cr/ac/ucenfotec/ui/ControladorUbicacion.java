@@ -1,7 +1,7 @@
 package cr.ac.ucenfotec.ui;
 
 import cr.ac.ucenfotec.entidades.Ubicacion;
-import cr.ac.ucenfotec.logica.Gestor;
+import cr.ac.ucenfotec.logica.GestorUbicaciones;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -49,9 +49,9 @@ public class ControladorUbicacion {
             {
                 showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             } else {
-                Gestor gestor = new Gestor();
+                GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
                 Ubicacion ubicacion = obtenerUbicacion();
-                String mensaje = gestor.insertarUbicacion(ubicacion);
+                String mensaje = gestorUbicaciones.insertarUbicacion(ubicacion);
                 if(mensaje.equals("La ubicación fue registrada con éxito."))
                 {
                     showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
@@ -87,9 +87,9 @@ public class ControladorUbicacion {
             {
                 showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             } else {
-                Gestor gestor = new Gestor();
+                GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
                 Ubicacion ubicacion = obtenerUbicacion();
-                String mensaje = gestor.actualizarUbicacion(ubicacion);
+                String mensaje = gestorUbicaciones.actualizarUbicacion(ubicacion);
                 if(mensaje.equals("La ubicación fue actualizada con éxito."))
                 {
                     showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
@@ -112,9 +112,9 @@ public class ControladorUbicacion {
             {
                 showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna ubicación.","No ha seleccionado ninguna ubicación.\nPor favor seleccione una ubicación para eliminar.");
             } else {
-                Gestor gestor = new Gestor();
+                GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
                 Ubicacion ubicacion = (Ubicacion) listaUbicaciones.getSelectionModel().getSelectedItem();
-                String mensaje = gestor.eliminarUbicacion(ubicacion);
+                String mensaje = gestorUbicaciones.eliminarUbicacion(ubicacion);
                 if(mensaje.equals("La ubicación fue eliminada con éxito."))
                 {
                     showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
@@ -149,10 +149,10 @@ public class ControladorUbicacion {
      * Metodo para actualizar el TableView de las ubicaciones
      */
     public void cargarListaUbicaciones(){
-        Gestor gestor = new Gestor();
+        GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
         listaUbicaciones.getItems().clear();
         observableUbicaciones = FXCollections.observableArrayList();
-        gestor.listarUbicaciones().forEach(ubicacion -> observableUbicaciones.addAll(ubicacion));
+        gestorUbicaciones.listarUbicaciones().forEach(ubicacion -> observableUbicaciones.addAll(ubicacion));
         tCodigo.setCellValueFactory(new PropertyValueFactory<Ubicacion,String>("codigo"));
         tNivel.setCellValueFactory(new PropertyValueFactory<Ubicacion,Integer>("nivel"));
         listaUbicaciones.setItems(observableUbicaciones);
@@ -200,11 +200,67 @@ public class ControladorUbicacion {
     }
 
     /**
+     * Metodo para ir a la pantalla de usuarios
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void usuarios (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
+        root = loader.load();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
      * Metodo para ir a la pantalla de administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void administradores (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Administrador.fxml"));
+        root = loader.load();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de tripulantes
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void tripulantes (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulante.fxml"));
+        root = loader.load();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de tripulaciones
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void tripulaciones (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulacion.fxml"));
+        root = loader.load();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de paises
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void paises (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Pais.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -233,6 +289,20 @@ public class ControladorUbicacion {
      */
     public void vuelos (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Vuelo.fxml"));
+        root = loader.load();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de puertas
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void puertas (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Puerta.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

@@ -1,8 +1,6 @@
 package cr.ac.ucenfotec.ui;
 
-import cr.ac.ucenfotec.entidades.Aeropuerto;
 import cr.ac.ucenfotec.entidades.Pais;
-import cr.ac.ucenfotec.logica.GestorAeropuertos;
 import cr.ac.ucenfotec.logica.GestorPaises;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,7 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
+
 import java.io.IOException;
 
 /**
@@ -24,45 +22,41 @@ import java.io.IOException;
  * @version 1.0
  * @since 24/11/2022
  *
- * Esta clase se encarga de gestionar el formulario FXML de Aeropuertos
+ * Esta clase se encarga de gestionar el formulario FXML de Paises
  */
-public class ControladorAeropuerto {
+public class ControladorPais {
     private Stage stage;
     private Scene scene;
     private Parent root;
     public TextField nombreText;
     public TextField codigoText;
     @FXML
-    TableView<Aeropuerto> listaAeropuertos;
+    TableView<Pais> listaPaises;
     @FXML
-    TableColumn<Aeropuerto,String> tNombre;
+    TableColumn<Pais,String> tCodigo;
     @FXML
-    TableColumn<Aeropuerto,String> tCodigo;
-    @FXML
-    public ObservableList<Aeropuerto> observableAeropuertos;
-    public ComboBox<Pais> paisCB;
+    TableColumn<Pais,String> tNombre;
     @FXML
     public ObservableList<Pais> observablePaises;
 
-
     /**
-     * Metodo para registrar un aeropuerto
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     * Metodo para registrar un pais
+     * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void registrar (ActionEvent actionEvent) {
-        if (nombreText.getText().isEmpty() || codigoText.getText().isEmpty() || paisCB.getValue() == null) {
+        if (codigoText.getText().isEmpty() || nombreText.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
         } else {
-            if (codigoText.getText().length() != 3) {
-                showAlert(Alert.AlertType.ERROR, "Revise el código del aeropuerto.", "El código del aeropuerto no tiene el formato adecuado.\nEl código debe estar conformado de exactamente 3 letras.");
+            if (codigoText.getText().length() != 2) {
+                showAlert(Alert.AlertType.ERROR, "Revise el código del país.", "El código del país no tiene el formato adecuado.\nEl código debe estar conformado de exactamente 2 letras.");
             } else {
-                GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-                Aeropuerto aeropuerto = obtenerAeropuerto();
-                String mensaje = gestorAeropuertos.insertarAeropuerto(aeropuerto);
-                if (mensaje.equals("El aeropuerto fue registrado con éxito.")) {
+                GestorPaises gestorPaises = new GestorPaises();
+                Pais pais = obtenerPais();
+                String mensaje = gestorPaises.insertarPais(pais);
+                if (mensaje.equals("El país fue registrado con éxito.")) {
                     showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
                     resetearValores();
-                    cargarListaAeropuertos();
+                    cargarListaPaises();
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
                 }
@@ -71,33 +65,33 @@ public class ControladorAeropuerto {
     }
 
     /**
-     * Metodo para obtener los valores de un aeropuerto en los TextField
+     * Metodo para obtener los valores de un pais en los TextField
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
-            Aeropuerto aeropuerto = (Aeropuerto) listaAeropuertos.getSelectionModel().getSelectedItem();
-            nombreText.setText(aeropuerto.getNombre());
-            codigoText.setText(aeropuerto.getCodigo());
+            Pais pais = (Pais) listaPaises.getSelectionModel().getSelectedItem();
+            codigoText.setText(pais.getCodigo());
+            nombreText.setText(pais.getNombre());
         }
     }
 
     /**
-     * Metodo para actualizar un aeropuerto
+     * Metodo para actualizar un pais
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void actualizarAeropuerto (ActionEvent actionEvent) {
-        if(nombreText.getText().isEmpty() || codigoText.getText().isEmpty() || paisCB.getValue() == null)
+    public void actualizarPais (ActionEvent actionEvent) {
+        if(nombreText.getText().isEmpty() || codigoText.getText().isEmpty())
         {
             showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
         } else {
-            GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-            Aeropuerto aeropuerto = obtenerAeropuerto();
-            String mensaje = gestorAeropuertos.actualizarAeropuerto(aeropuerto);
-            if(mensaje.equals("El aeropuerto fue actualizado con éxito."))
+            GestorPaises gestorPaises = new GestorPaises();
+            Pais pais = obtenerPais();
+            String mensaje = gestorPaises.actualizarPais(pais);
+            if(mensaje.equals("El país fue actualizado con éxito."))
             {
                 showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAeropuertos ();
+                cargarListaPaises ();
             } else {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
@@ -105,21 +99,21 @@ public class ControladorAeropuerto {
     }
 
     /**
-     * Metodo para eliminar un aeropuerto
+     * Metodo para eliminar un pais
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void eliminarAeropuerto (ActionEvent actionEvent) {
-        if(listaAeropuertos.getSelectionModel().getSelectedItem() == null)
+    public void eliminarPais (ActionEvent actionEvent) {
+        if(listaPaises.getSelectionModel().getSelectedItem() == null)
         {
-            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún aeropuerto.","No ha seleccionado ningún aeropuerto.\nPor favor seleccione un aeropuerto para eliminar.");
+            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún país.","No ha seleccionado ningún país.\nPor favor seleccione un país para eliminar.");
         } else {
-            GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-            Aeropuerto aeropuerto = (Aeropuerto) listaAeropuertos.getSelectionModel().getSelectedItem();
-            String mensaje = gestorAeropuertos.eliminarAeropuerto(aeropuerto);
-            if(mensaje.equals("El aeropuerto fue eliminado con éxito."))
+            GestorPaises gestorPaises = new GestorPaises();
+            Pais pais = (Pais) listaPaises.getSelectionModel().getSelectedItem();
+            String mensaje = gestorPaises.eliminarPais(pais);
+            if(mensaje.equals("El país fue eliminado con éxito."))
             {
                 showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAeropuertos();
+                cargarListaPaises();
             } else {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
@@ -127,69 +121,37 @@ public class ControladorAeropuerto {
     }
 
     /**
-     * Metodo para obtener los datos de un aeropuerto de los TextField
+     * Metodo para obtener los datos de un pais de los TextField
      */
-    public Aeropuerto obtenerAeropuerto() {
-        String nombre = nombreText.getText();
+    public Pais obtenerPais() {
         String codigo = codigoText.getText();
-        Pais pais = (Pais) paisCB.getValue();
-        Aeropuerto aeropuerto = new Aeropuerto(nombre, codigo, pais);
+        String nombre = nombreText.getText();
+        Pais pais = new Pais(codigo, nombre);
 
-        return aeropuerto;
+        return pais;
     }
 
     /**
      * Metodo para resetear los valores dem los TextField
      */
     public void resetearValores() {
-        cargarListaAeropuertos();
+        cargarListaPaises();
         nombreText.setText("");
         codigoText.setText("");
-        paisCB.getSelectionModel().clearSelection();
     }
 
     /**
-     * Metodo para actualizar el TableView de los aeropuertos
+     * Metodo para actualizar el TableView de los paiss
      */
-    public void cargarListaAeropuertos () {
-        GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-        listaAeropuertos.getItems().clear();
-        observableAeropuertos = FXCollections.observableArrayList();
-        gestorAeropuertos.listarAeropuertos().forEach(aeropuerto -> observableAeropuertos.addAll(aeropuerto));
-        observableAeropuertos = FXCollections.observableArrayList(gestorAeropuertos.listarAeropuertos());
-        tNombre.setCellValueFactory(new PropertyValueFactory<Aeropuerto,String>("nombre"));
-        tCodigo.setCellValueFactory(new PropertyValueFactory<Aeropuerto,String>("codigo"));
-        listaAeropuertos.setItems(observableAeropuertos);
-        cargarComboBoxes();
-    }
-
-    /**
-     * Metodo para actualizar los ComboBoxes
-     */
-    public void cargarComboBoxes () {
+    public void cargarListaPaises () {
         GestorPaises gestorPaises = new GestorPaises();
+        listaPaises.getItems().clear();
+        observablePaises = FXCollections.observableArrayList();
+        gestorPaises.listarPaises().forEach(pais -> observablePaises.addAll(pais));
         observablePaises = FXCollections.observableArrayList(gestorPaises.listarPaises());
-        paisCB.setItems(observablePaises);
-        Callback<ListView<Pais>, ListCell<Pais>> cellFactory = new Callback<>() {
-
-            @Override
-            public ListCell<Pais> call(ListView<Pais> l) {
-                return new ListCell<>() {
-                    @Override
-                    protected void updateItem(Pais item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item == null || empty) {
-                            setGraphic(null);
-                        } else {
-                            setText("(" + item.getCodigo()+ ") " + item.getNombre());
-                        }
-                    }
-                };
-            }
-        };
-
-        paisCB.setButtonCell(cellFactory.call(null));
-        paisCB.setCellFactory(cellFactory);
+        tCodigo.setCellValueFactory(new PropertyValueFactory<Pais,String>("codigo"));
+        tNombre.setCellValueFactory(new PropertyValueFactory<Pais,String>("nombre"));
+        listaPaises.setItems(observablePaises);
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -206,7 +168,7 @@ public class ControladorAeropuerto {
     @FXML
     public void initialize() {
         try {
-            cargarListaAeropuertos ();
+            cargarListaPaises ();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -283,11 +245,11 @@ public class ControladorAeropuerto {
     }
 
     /**
-     * Metodo para ir a la pantalla de paises
+     * Metodo para ir a la pantalla de aeropuertos
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void paises (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Pais.fxml"));
+    public void aeropuertos (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Aeropuerto.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

@@ -8,36 +8,61 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.ucenfotec.ui.ControladorInicio">
    <children>
-      <ToolBar prefHeight="61.0" prefWidth="800.0">
+      <ToolBar prefHeight="38.0" prefWidth="800.0">
         <items>
             <Button mnemonicParsing="false" text="Inicio">
                <font>
-                  <Font size="16.0" />
+                  <Font size="10.0" />
                </font>
             </Button>
           <Button mnemonicParsing="false" onAction="#administradores" text="Administradores">
                <font>
-                  <Font size="16.0" />
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#usuarios" text="Usuarios">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#tripulantes" text="Tripulantes">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#tripulaciones" text="Tripulaciones">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#paises" text="Países">
+               <font>
+                  <Font size="10.0" />
                </font>
             </Button>
             <Button mnemonicParsing="false" onAction="#aeropuertos" text="Aeropuertos">
                <font>
-                  <Font size="16.0" />
+                  <Font size="10.0" />
                </font>
             </Button>
             <Button mnemonicParsing="false" onAction="#vuelos" text="Vuelos">
                <font>
-                  <Font size="16.0" />
+                  <Font size="10.0" />
                </font>
             </Button>
             <Button mnemonicParsing="false" onAction="#ubicaciones" text="Ubicaciones">
                <font>
-                  <Font size="16.0" />
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#puertas" text="Puertas">
+               <font>
+                  <Font size="10.0" />
                </font>
             </Button>
             <Button mnemonicParsing="false" onAction="#salir" text="Salir">
                <font>
-                  <Font size="16.0" />
+                  <Font size="10.0" />
                </font>
             </Button>
         </items>

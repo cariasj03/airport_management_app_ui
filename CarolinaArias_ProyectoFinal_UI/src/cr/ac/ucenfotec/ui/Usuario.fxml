@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.ucenfotec.ui.ControladorAdministrador">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.ucenfotec.ui.ControladorUsuario">
    <children>
       <ToolBar layoutX="-2.0" prefHeight="39.0" prefWidth="802.0">
          <items>
@@ -23,12 +23,12 @@
                   <Font size="10.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" text="Administradores">
+            <Button mnemonicParsing="false" onAction="#administradores" text="Administradores">
                <font>
                   <Font size="10.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#usuarios" text="Usuarios">
+            <Button mnemonicParsing="false" text="Usuarios">
                <font>
                   <Font size="10.0" />
                </font>
@@ -75,7 +75,7 @@
             </Button>
          </items>
       </ToolBar>
-      <Text layoutX="216.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registro de administradores" textAlignment="CENTER" wrappingWidth="376.7825012207031">
+      <Text layoutX="216.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registro de usuarios" textAlignment="CENTER" wrappingWidth="376.7825012207031">
          <font>
             <Font name="Arial Black" size="20.0" />
          </font>
@@ -110,7 +110,7 @@
       <Label layoutX="466.0" layoutY="247.0" text="Otras señas: *" />
       <Button layoutX="489.0" layoutY="313.0" mnemonicParsing="false" onAction="#registrar" text="Registrar" />
       <Label layoutX="467.0" layoutY="280.0" text="Contraseña: *" />
-      <TableView fx:id="listaAdministradores" layoutX="28.0" layoutY="356.0" onMousePressed="#dobleClick" prefHeight="166.0" prefWidth="747.0">
+      <TableView fx:id="listaUsuarios" layoutX="28.0" layoutY="356.0" onMousePressed="#dobleClick" prefHeight="166.0" prefWidth="747.0">
         <columns>
           <TableColumn fx:id="tId" prefWidth="86.0" text="Identificación" />
           <TableColumn fx:id="tNombre" prefWidth="76.0" text="Nombre" />
@@ -121,13 +121,13 @@
             <TableColumn fx:id="tCorreo" prefWidth="180.0" text="Correo electrónico" />
         </columns>
       </TableView>
-      <Button layoutX="378.0" layoutY="313.0" mnemonicParsing="false" onAction="#actualizarAdministrador" text="Actualizar" />
+      <Button layoutX="378.0" layoutY="313.0" mnemonicParsing="false" onAction="#actualizarUsuario" text="Actualizar" />
       <Label layoutX="33.0" layoutY="522.0" text="? = Puede dar doble click a un registro de la tabla para actualizarlo más fácilmente.">
          <font>
             <Font size="10.0" />
          </font>
       </Label>
-      <Button layoutX="375.0" layoutY="550.0" mnemonicParsing="false" onAction="#eliminarAdministrador" text="Eliminar" />
+      <Button layoutX="375.0" layoutY="550.0" mnemonicParsing="false" onAction="#eliminarUsuario" text="Eliminar" />
       <Button layoutX="250.0" layoutY="313.0" mnemonicParsing="false" onAction="#resetearValores" text="Borrar datos" />
    </children>
 </AnchorPane>

@@ -1,6 +1,6 @@
 package cr.ac.ucenfotec.ui;
 
-import cr.ac.ucenfotec.entidades.Administrador;
+import cr.ac.ucenfotec.entidades.Usuario;
 import cr.ac.ucenfotec.entidades.Direccion;
 import cr.ac.ucenfotec.logica.GestorPersonas;
 import javafx.collections.FXCollections;
@@ -11,26 +11,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
-import javafx.scene.control.*;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 /**
  * @author Carolina Arias
  * @version 1.0
- * @since 24/11/2022
+ * @since 03/12/2022
  *
- * Esta clase se encarga de gestionar el formulario FXML de Administradores
+ * Esta clase se encarga de gestionar el formulario FXML de Usuarios
  */
 
-public class ControladorAdministrador {
+public class ControladorUsuario {
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -52,26 +50,26 @@ public class ControladorAdministrador {
     public TextField detalleText;
     public PasswordField passField;
     @FXML
-    TableView<Administrador> listaAdministradores;
+    TableView<Usuario> listaUsuarios;
     @FXML
-    TableColumn<Administrador, String> tId;
+    TableColumn<Usuario, String> tId;
     @FXML
-    TableColumn<Administrador, String> tNombre;
+    TableColumn<Usuario, String> tNombre;
     @FXML
-    TableColumn<Administrador, String> tApellidos;
+    TableColumn<Usuario, String> tApellidos;
     @FXML
-    TableColumn<Administrador, LocalDate> tFechaNac;
+    TableColumn<Usuario, LocalDate> tFechaNac;
     @FXML
-    TableColumn<Administrador, String> tGenero;
+    TableColumn<Usuario, String> tGenero;
     @FXML
-    TableColumn<Administrador, String> tNacionalidad;
+    TableColumn<Usuario, String> tNacionalidad;
     @FXML
-    TableColumn<Administrador, String> tCorreo;
+    TableColumn<Usuario, String> tCorreo;
     @FXML
-    public ObservableList<Administrador> observableAdministradores;
+    public ObservableList<Usuario> observableUsuarios;
 
     /**
-     * Metodo para registrar un administrador
+     * Metodo para registrar un usuario
      *
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
@@ -81,9 +79,9 @@ public class ControladorAdministrador {
                 showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
             } else {
                 GestorPersonas gestorPersonas = new GestorPersonas();
-                Administrador administrador = obtenerAdministrador();
-                String mensaje = gestorPersonas.insertarAdministrador(administrador);
-                if (mensaje.equals("El administrador fue creado con éxito.")) {
+                Usuario usuario = obtenerUsuario();
+                String mensaje = gestorPersonas.insertarUsuario(usuario);
+                if (mensaje.equals("El usuario fue creado con éxito.")) {
                     showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
                     resetearValores();
                 } else {
@@ -96,31 +94,31 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para obtener los valores de un administrador en los TextField
+     * Metodo para obtener los valores de un usuario en los TextField
      *
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
-            Administrador administrador = (Administrador) listaAdministradores.getSelectionModel().getSelectedItem();
-            idText.setText(administrador.getId());
-            nombreText.setText(administrador.getNombre());
-            apellidosText.setText(administrador.getApellidos());
-            nacionalidadText.setText(administrador.getNacionalidad());
-            fechaNacDatePicker.setValue(administrador.getFechaNacimiento());
-            correoText.setText(administrador.getCorreoElectronico());
-            provinciaText.setText(administrador.getDireccion().getProvincia());
-            cantonText.setText(administrador.getDireccion().getCanton());
-            distritoText.setText(administrador.getDireccion().getDistrito());
-            detalleText.setText(administrador.getDireccion().getDetalleDireccion());
-            passField.setText(administrador.getContrasena());
-            if (administrador.getGenero().equals("F")) {
+            Usuario usuario = (Usuario) listaUsuarios.getSelectionModel().getSelectedItem();
+            idText.setText(usuario.getId());
+            nombreText.setText(usuario.getNombre());
+            apellidosText.setText(usuario.getApellidos());
+            nacionalidadText.setText(usuario.getNacionalidad());
+            fechaNacDatePicker.setValue(usuario.getFechaNacimiento());
+            correoText.setText(usuario.getCorreoElectronico());
+            provinciaText.setText(usuario.getDireccion().getProvincia());
+            cantonText.setText(usuario.getDireccion().getCanton());
+            distritoText.setText(usuario.getDireccion().getDistrito());
+            detalleText.setText(usuario.getDireccion().getDetalleDireccion());
+            passField.setText(usuario.getContrasena());
+            if (usuario.getGenero().equals("F")) {
                 femeninoRadio.setSelected(true);
             } else {
-                if (administrador.getGenero().equals("M")) {
+                if (usuario.getGenero().equals("M")) {
                     masculinoRadio.setSelected(true);
                 } else {
-                    if (administrador.getGenero().equals("O")) {
+                    if (usuario.getGenero().equals("O")) {
                         otroRadio.setSelected(true);
                     }
                 }
@@ -129,20 +127,19 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para actualizar un administrador
-     *
+     * Metodo para actualizar un usuario
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void actualizarAdministrador(ActionEvent actionEvent) {
+    public void actualizarUsuario(ActionEvent actionEvent) {
         if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
         } else {
             GestorPersonas gestorPersonas = new GestorPersonas();
-            Administrador administrador = obtenerAdministrador();
-            String mensaje = gestorPersonas.actualizarAdministrador(administrador);
-            if (mensaje.equals("El administrador fue actualizado con éxito.")) {
+            Usuario usuario = obtenerUsuario();
+            String mensaje = gestorPersonas.actualizarUsuario(usuario);
+            if (mensaje.equals("El usuario fue actualizado con éxito.")) {
                 showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
-                cargarListaAdministradores();
+                cargarListaUsuarios();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
             }
@@ -150,20 +147,20 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para eliminar un administrador
+     * Metodo para eliminar un usuario
      *
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void eliminarAdministrador(ActionEvent actionEvent) {
-        if (listaAdministradores.getSelectionModel().getSelectedItem() == null) {
-            showAlert(Alert.AlertType.ERROR, "No ha seleccionado ningún administrador.", "No ha seleccionado ningún administrador.\nPor favor seleccione un administrador para eliminar.");
+    public void eliminarUsuario(ActionEvent actionEvent) {
+        if (listaUsuarios.getSelectionModel().getSelectedItem() == null) {
+            showAlert(Alert.AlertType.ERROR, "No ha seleccionado ningún usuario.", "No ha seleccionado ningún usuario.\nPor favor seleccione un usuario para eliminar.");
         } else {
             GestorPersonas gestorPersonas = new GestorPersonas();
-            Administrador administrador = (Administrador) listaAdministradores.getSelectionModel().getSelectedItem();
-            String mensaje = gestorPersonas.eliminarAdministrador(administrador);
-            if (mensaje.equals("El administrador fue eliminado con éxito.")) {
+            Usuario usuario = (Usuario) listaUsuarios.getSelectionModel().getSelectedItem();
+            String mensaje = gestorPersonas.eliminarUsuario(usuario);
+            if (mensaje.equals("El usuario fue eliminado con éxito.")) {
                 showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
-                cargarListaAdministradores();
+                cargarListaUsuarios();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
             }
@@ -171,9 +168,9 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para obtener los datos de un administrador de los TextField
+     * Metodo para obtener los datos de un usuario de los TextField
      */
-    public Administrador obtenerAdministrador() {
+    public Usuario obtenerUsuario() {
         String id = idText.getText();
         String nombre = nombreText.getText();
         String apellidos = apellidosText.getText();
@@ -190,34 +187,34 @@ public class ControladorAdministrador {
         String detalle = detalleText.getText();
         String contrasena = passField.getText();
         Direccion direccion = new Direccion(provincia, canton, distrito, detalle);
-        Administrador administrador = new Administrador(id, nombre, apellidos, nacionalidad, fechaNacimiento, edad, genero, correo, direccion, contrasena);
+        Usuario usuario = new Usuario(id, nombre, apellidos, nacionalidad, fechaNacimiento, edad, genero, correo, direccion, contrasena);
 
-        return administrador;
+        return usuario;
     }
 
     /**
-     * Metodo para actualizar el TableView de los administradores
+     * Metodo para actualizar el TableView de los usuarios
      */
-    public void cargarListaAdministradores () {
+    public void cargarListaUsuarios () {
         GestorPersonas gestorPersonas = new GestorPersonas();
-        listaAdministradores.getItems().clear();
-        observableAdministradores = FXCollections.observableArrayList();
-        gestorPersonas.listarAdministradores().forEach(administrador -> observableAdministradores.addAll(administrador));
-        tId.setCellValueFactory(new PropertyValueFactory<Administrador,String>("id"));
-        tNombre.setCellValueFactory(new PropertyValueFactory<Administrador,String>("nombre"));
-        tApellidos.setCellValueFactory(new PropertyValueFactory<Administrador,String>("apellidos"));
-        tFechaNac.setCellValueFactory(new PropertyValueFactory<Administrador, LocalDate>("fechaNacimiento"));
-        tGenero.setCellValueFactory(new PropertyValueFactory<Administrador,String>("genero"));
-        tNacionalidad.setCellValueFactory(new PropertyValueFactory<Administrador,String>("nacionalidad"));
-        tCorreo.setCellValueFactory(new PropertyValueFactory<Administrador,String>("correoElectronico"));
-        listaAdministradores.setItems(observableAdministradores);
+        listaUsuarios.getItems().clear();
+        observableUsuarios = FXCollections.observableArrayList();
+        gestorPersonas.listarUsuarios().forEach(usuario -> observableUsuarios.addAll(usuario));
+        tId.setCellValueFactory(new PropertyValueFactory<Usuario,String>("id"));
+        tNombre.setCellValueFactory(new PropertyValueFactory<Usuario,String>("nombre"));
+        tApellidos.setCellValueFactory(new PropertyValueFactory<Usuario,String>("apellidos"));
+        tFechaNac.setCellValueFactory(new PropertyValueFactory<Usuario, LocalDate>("fechaNacimiento"));
+        tGenero.setCellValueFactory(new PropertyValueFactory<Usuario,String>("genero"));
+        tNacionalidad.setCellValueFactory(new PropertyValueFactory<Usuario,String>("nacionalidad"));
+        tCorreo.setCellValueFactory(new PropertyValueFactory<Usuario,String>("correoElectronico"));
+        listaUsuarios.setItems(observableUsuarios);
     }
 
     /**
      * Metodo para resetear los valores dem los TextField
      */
     public void resetearValores() {
-        cargarListaAdministradores ();
+        cargarListaUsuarios ();
         idText.setText("");
         nombreText.setText("");
         apellidosText.setText("");
@@ -235,7 +232,7 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para obtener el genero del administrador de los RadioButton
+     * Metodo para obtener el genero del usuario de los RadioButton
      */
     public String obtenerGenero (){
         String genero = "";
@@ -278,7 +275,7 @@ public class ControladorAdministrador {
     public void initialize()
     {
         try {
-            cargarListaAdministradores ();
+            cargarListaUsuarios ();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -299,11 +296,11 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para ir a la pantalla de usuarios
+     * Metodo para ir a la pantalla de administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void usuarios (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
+    public void administradores (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Administrador.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

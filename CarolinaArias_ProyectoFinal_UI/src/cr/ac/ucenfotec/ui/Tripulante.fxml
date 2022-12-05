@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.ucenfotec.ui.ControladorTripulante">
+   <children>
+      <ToolBar layoutX="-2.0" prefHeight="39.0" prefWidth="802.0">
+         <items>
+            <Button mnemonicParsing="false" onAction="#inicio" text="Inicio">
+               <font>
+                  <Font size="10.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#administradores" text="Administradores">
+               <font>
+                  <Font size="10.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#usuarios" text="Usuarios">
+               <font>
+                  <Font size="10.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" text="Tripulantes">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#tripulaciones" text="Tripulaciones">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#paises" text="Países">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#aeropuertos" text="Aeropuertos">
+               <font>
+                  <Font size="10.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#vuelos" text="Vuelos">
+               <font>
+                  <Font size="10.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#ubicaciones" text="Ubicaciones">
+               <font>
+                  <Font size="10.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#puertas" text="Puertas">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#salir" text="Salir">
+               <font>
+                  <Font size="10.0" />
+               </font></Button>
+         </items>
+      </ToolBar>
+      <Text layoutX="216.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registro de tripulantes" textAlignment="CENTER" wrappingWidth="376.7825012207031">
+         <font>
+            <Font name="Arial Black" size="20.0" />
+         </font>
+      </Text>
+      <TextField fx:id="idText" layoutX="158.0" layoutY="82.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="nombreText" layoutX="158.0" layoutY="111.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="apellidosText" layoutX="158.0" layoutY="140.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="nacionalidadText" layoutX="158.0" layoutY="169.0" prefHeight="26.0" prefWidth="225.0" />
+      <DatePicker fx:id="fechaNacDatePicker" layoutX="158.0" layoutY="198.0" prefHeight="26.0" prefWidth="225.0" />
+      <RadioButton fx:id="femeninoRadio" layoutX="158.0" layoutY="229.0" mnemonicParsing="false" text="Femenino">
+         <toggleGroup>
+            <ToggleGroup fx:id="generoToggleGroup" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="masculinoRadio" layoutX="244.0" layoutY="229.0" mnemonicParsing="false" text="Masculino" toggleGroup="$generoToggleGroup" />
+      <RadioButton fx:id="otroRadio" layoutX="332.0" layoutY="229.0" mnemonicParsing="false" text="Otro" toggleGroup="$generoToggleGroup" />
+      <TextField fx:id="correoText" layoutX="156.0" layoutY="250.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="provinciaText" layoutX="156.0" layoutY="280.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="cantonText" layoutX="156.0" layoutY="310.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="distritoText" layoutX="547.0" layoutY="81.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="detalleText" layoutX="547.0" layoutY="110.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="aniosExpText" layoutX="547.0" layoutY="139.0" prefHeight="26.0" prefWidth="225.0" />
+      <DatePicker fx:id="fechaGradDatePicker" layoutX="547.0" layoutY="168.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="numeroLicenciaText" layoutX="547.0" layoutY="197.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="puestoText" layoutX="547.0" layoutY="226.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="telefonoText" layoutX="547.0" layoutY="255.0" prefHeight="26.0" prefWidth="225.0" />
+      <PasswordField fx:id="passField" layoutX="547.0" layoutY="285.0" prefHeight="25.0" prefWidth="225.0" />
+      <Label layoutX="67.0" layoutY="86.0" text="Identificación: *" />
+      <Label layoutX="93.0" layoutY="115.0" text="Nombre: *" />
+      <Label layoutX="88.0" layoutY="144.0" text="Apellidos: *" />
+      <Label layoutX="68.0" layoutY="173.0" text="Nacionalidad: *" />
+      <Label layoutX="28.0" layoutY="203.0" text="Fecha de nacimiento: *" />
+      <Label layoutX="98.0" layoutY="229.0" text="Género: *" />
+      <Label layoutX="39.0" layoutY="255.0" text="Correo electrónico: *" />
+      <Label layoutX="88.0" layoutY="284.0" text="Provincia: *" />
+      <Label layoutX="97.0" layoutY="314.0" text="Cantón: *" />
+      <Label layoutX="487.0" layoutY="85.0" text="Distrito: *" />
+      <Label layoutX="464.0" layoutY="115.0" text="Otras señas: *" />
+      <Label layoutX="418.0" layoutY="143.0" text="Años de experiencia: *" />
+      <Label layoutX="414.0" layoutY="173.0" text="Fecha de graduación: *" />
+      <Label layoutX="423.0" layoutY="202.0" text="Número de licencia: *" />
+      <Label layoutX="490.0" layoutY="231.0" text="Puesto: *" />
+      <Label layoutX="480.0" layoutY="260.0" text="Teléfono: *" />
+      <Label layoutX="467.0" layoutY="289.0" text="Contraseña: *" />
+      <Button layoutX="489.0" layoutY="345.0" mnemonicParsing="false" onAction="#registrar" text="Registrar" />
+      <Button layoutX="378.0" layoutY="345.0" mnemonicParsing="false" onAction="#actualizarTripulante" text="Actualizar" />
+      <TableView fx:id="listaTripulantes" layoutX="28.0" layoutY="382.0" onMousePressed="#dobleClick" prefHeight="138.0" prefWidth="747.0">
+        <columns>
+          <TableColumn fx:id="tId" prefWidth="86.0" text="Identificación" />
+          <TableColumn fx:id="tNombre" prefWidth="76.0" text="Nombre" />
+            <TableColumn fx:id="tApellidos" minWidth="4.0" prefWidth="117.0" text="Apellidos" />
+            <TableColumn fx:id="tFechaNac" prefWidth="123.0" text="Fecha de nacimiento" />
+            <TableColumn fx:id="tGenero" prefWidth="50.0" text="Género" />
+            <TableColumn fx:id="tNacionalidad" minWidth="0.0" prefWidth="112.0" text="Nacionalidad" />
+            <TableColumn fx:id="tCorreo" prefWidth="180.0" text="Correo electrónico" />
+        </columns>
+      </TableView>
+      <Label layoutX="33.0" layoutY="522.0" text="? = Puede dar doble click a un registro de la tabla para actualizarlo más fácilmente.">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+      <Button layoutX="375.0" layoutY="550.0" mnemonicParsing="false" onAction="#eliminarTripulante" text="Eliminar" />
+      <Button layoutX="250.0" layoutY="345.0" mnemonicParsing="false" onAction="#resetearValores" text="Borrar datos" />
+   </children>
+</AnchorPane>

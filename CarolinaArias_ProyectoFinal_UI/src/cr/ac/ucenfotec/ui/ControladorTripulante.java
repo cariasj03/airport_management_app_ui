@@ -1,7 +1,8 @@
 package cr.ac.ucenfotec.ui;
 
-import cr.ac.ucenfotec.entidades.Administrador;
 import cr.ac.ucenfotec.entidades.Direccion;
+import cr.ac.ucenfotec.entidades.Tripulacion;
+import cr.ac.ucenfotec.entidades.Tripulante;
 import cr.ac.ucenfotec.logica.GestorPersonas;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,26 +12,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
-import javafx.scene.control.*;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 /**
  * @author Carolina Arias
  * @version 1.0
- * @since 24/11/2022
+ * @since 03/12/2022
  *
- * Esta clase se encarga de gestionar el formulario FXML de Administradores
+ * Esta clase se encarga de gestionar el formulario FXML de Tripulantes
  */
 
-public class ControladorAdministrador {
+public class ControladorTripulante {
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -50,77 +49,90 @@ public class ControladorAdministrador {
     public TextField cantonText;
     public TextField distritoText;
     public TextField detalleText;
+    public TextField aniosExpText;
+    public DatePicker fechaGradDatePicker;
+    public TextField numeroLicenciaText;
+    public TextField puestoText;
+    public TextField telefonoText;
+    public ComboBox<Tripulacion> tripulacionCB;
     public PasswordField passField;
     @FXML
-    TableView<Administrador> listaAdministradores;
+    TableView<Tripulante> listaTripulantes;
     @FXML
-    TableColumn<Administrador, String> tId;
+    TableColumn<Tripulante, String> tId;
     @FXML
-    TableColumn<Administrador, String> tNombre;
+    TableColumn<Tripulante, String> tNombre;
     @FXML
-    TableColumn<Administrador, String> tApellidos;
+    TableColumn<Tripulante, String> tApellidos;
     @FXML
-    TableColumn<Administrador, LocalDate> tFechaNac;
+    TableColumn<Tripulante, LocalDate> tFechaNac;
     @FXML
-    TableColumn<Administrador, String> tGenero;
+    TableColumn<Tripulante, String> tGenero;
     @FXML
-    TableColumn<Administrador, String> tNacionalidad;
+    TableColumn<Tripulante, String> tNacionalidad;
     @FXML
-    TableColumn<Administrador, String> tCorreo;
+    TableColumn<Tripulante, String> tCorreo;
     @FXML
-    public ObservableList<Administrador> observableAdministradores;
+    public ObservableList<Tripulante> observableTripulantes;
 
     /**
-     * Metodo para registrar un administrador
+     * Metodo para registrar un tripulante
      *
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void registrar(ActionEvent actionEvent) {
         try {
-            if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
+            if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty() || aniosExpText.getText().isEmpty() || fechaGradDatePicker.getValue() == null || aniosExpText.getText().isEmpty() || numeroLicenciaText.getText().isEmpty() || puestoText.getText().isEmpty() || telefonoText.getText().isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
             } else {
                 GestorPersonas gestorPersonas = new GestorPersonas();
-                Administrador administrador = obtenerAdministrador();
-                String mensaje = gestorPersonas.insertarAdministrador(administrador);
-                if (mensaje.equals("El administrador fue creado con éxito.")) {
+                Tripulante tripulante = obtenerTripulante();
+                String mensaje = gestorPersonas.insertarTripulante(tripulante);
+                if (mensaje.equals("El tripulante fue creado con éxito.")) {
                     showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
                     resetearValores();
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
                 }
             }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","El campos Años de experiencia solo acepta valores numéricos.");
         } catch (DateTimeParseException dfe) {
             showAlert(Alert.AlertType.ERROR,"La fecha no tiene un formato adecuado.","La fecha no tiene un formato adecuado.\nPor favor digítela con el formato adecuado.");
         }
     }
 
     /**
-     * Metodo para obtener los valores de un administrador en los TextField
+     * Metodo para obtener los valores de un tripulante en los TextField
      *
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
-            Administrador administrador = (Administrador) listaAdministradores.getSelectionModel().getSelectedItem();
-            idText.setText(administrador.getId());
-            nombreText.setText(administrador.getNombre());
-            apellidosText.setText(administrador.getApellidos());
-            nacionalidadText.setText(administrador.getNacionalidad());
-            fechaNacDatePicker.setValue(administrador.getFechaNacimiento());
-            correoText.setText(administrador.getCorreoElectronico());
-            provinciaText.setText(administrador.getDireccion().getProvincia());
-            cantonText.setText(administrador.getDireccion().getCanton());
-            distritoText.setText(administrador.getDireccion().getDistrito());
-            detalleText.setText(administrador.getDireccion().getDetalleDireccion());
-            passField.setText(administrador.getContrasena());
-            if (administrador.getGenero().equals("F")) {
+            Tripulante tripulante = (Tripulante) listaTripulantes.getSelectionModel().getSelectedItem();
+            idText.setText(tripulante.getId());
+            nombreText.setText(tripulante.getNombre());
+            apellidosText.setText(tripulante.getApellidos());
+            nacionalidadText.setText(tripulante.getNacionalidad());
+            fechaNacDatePicker.setValue(tripulante.getFechaNacimiento());
+            correoText.setText(tripulante.getCorreoElectronico());
+            provinciaText.setText(tripulante.getDireccion().getProvincia());
+            cantonText.setText(tripulante.getDireccion().getCanton());
+            distritoText.setText(tripulante.getDireccion().getDistrito());
+            detalleText.setText(tripulante.getDireccion().getDetalleDireccion());
+            aniosExpText.setText(String.valueOf(tripulante.getAniosExperiencia()));
+            fechaGradDatePicker.setValue(tripulante.getFechaGraduacion());
+            numeroLicenciaText.setText(tripulante.getNumeroLicencia());
+            puestoText.setText(tripulante.getPuesto());
+            telefonoText.setText(tripulante.getTelefono());
+            passField.setText(tripulante.getContrasena());
+            if (tripulante.getGenero().equals("F")) {
                 femeninoRadio.setSelected(true);
             } else {
-                if (administrador.getGenero().equals("M")) {
+                if (tripulante.getGenero().equals("M")) {
                     masculinoRadio.setSelected(true);
                 } else {
-                    if (administrador.getGenero().equals("O")) {
+                    if (tripulante.getGenero().equals("O")) {
                         otroRadio.setSelected(true);
                     }
                 }
@@ -129,20 +141,46 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para actualizar un administrador
+     * Metodo para actualizar un tripulante
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void actualizarTripulante(ActionEvent actionEvent) {
+        try {
+            if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty() || aniosExpText.getText().isEmpty() || fechaGradDatePicker.getValue() == null || aniosExpText.getText().isEmpty() || numeroLicenciaText.getText().isEmpty() || puestoText.getText().isEmpty() || telefonoText.getText().isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
+            } else {
+                GestorPersonas gestorPersonas = new GestorPersonas();
+                Tripulante tripulante = obtenerTripulante();
+                String mensaje = gestorPersonas.actualizarTripulante(tripulante);
+                if (mensaje.equals("El tripulante fue actualizado con éxito.")) {
+                    showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
+                    cargarListaTripulantes();
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
+                }
+            }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","El campo \"Años de experiencia\" solo acepta valores numéricos.");
+        } catch (DateTimeParseException dfe) {
+            showAlert(Alert.AlertType.ERROR,"La fecha no tiene un formato adecuado.","La fecha no tiene un formato adecuado.\nPor favor digítela con el formato adecuado.");
+        }
+    }
+
+    /**
+     * Metodo para eliminar un tripulante
      *
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void actualizarAdministrador(ActionEvent actionEvent) {
-        if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
+    public void eliminarTripulante(ActionEvent actionEvent) {
+        if (listaTripulantes.getSelectionModel().getSelectedItem() == null) {
+            showAlert(Alert.AlertType.ERROR, "No ha seleccionado ningún tripulante.", "No ha seleccionado ningún tripulante.\nPor favor seleccione un tripulante para eliminar.");
         } else {
             GestorPersonas gestorPersonas = new GestorPersonas();
-            Administrador administrador = obtenerAdministrador();
-            String mensaje = gestorPersonas.actualizarAdministrador(administrador);
-            if (mensaje.equals("El administrador fue actualizado con éxito.")) {
+            Tripulante tripulante = (Tripulante) listaTripulantes.getSelectionModel().getSelectedItem();
+            String mensaje = gestorPersonas.eliminarTripulante(tripulante);
+            if (mensaje.equals("El tripulante fue eliminado con éxito.")) {
                 showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
-                cargarListaAdministradores();
+                cargarListaTripulantes();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
             }
@@ -150,30 +188,9 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para eliminar un administrador
-     *
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     * Metodo para obtener los datos de un tripulante de los TextField
      */
-    public void eliminarAdministrador(ActionEvent actionEvent) {
-        if (listaAdministradores.getSelectionModel().getSelectedItem() == null) {
-            showAlert(Alert.AlertType.ERROR, "No ha seleccionado ningún administrador.", "No ha seleccionado ningún administrador.\nPor favor seleccione un administrador para eliminar.");
-        } else {
-            GestorPersonas gestorPersonas = new GestorPersonas();
-            Administrador administrador = (Administrador) listaAdministradores.getSelectionModel().getSelectedItem();
-            String mensaje = gestorPersonas.eliminarAdministrador(administrador);
-            if (mensaje.equals("El administrador fue eliminado con éxito.")) {
-                showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
-                cargarListaAdministradores();
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
-            }
-        }
-    }
-
-    /**
-     * Metodo para obtener los datos de un administrador de los TextField
-     */
-    public Administrador obtenerAdministrador() {
+    public Tripulante obtenerTripulante() {
         String id = idText.getText();
         String nombre = nombreText.getText();
         String apellidos = apellidosText.getText();
@@ -188,36 +205,41 @@ public class ControladorAdministrador {
         String canton = cantonText.getText();
         String distrito = distritoText.getText();
         String detalle = detalleText.getText();
+        int aniosExperiencia = Integer.parseInt(aniosExpText.getText());
+        LocalDate fechaGraduacion = fechaGradDatePicker.getValue();
+        String numeroLicencia = numeroLicenciaText.getText();
+        String puesto = puestoText.getText();
+        String telefono = telefonoText.getText();
         String contrasena = passField.getText();
         Direccion direccion = new Direccion(provincia, canton, distrito, detalle);
-        Administrador administrador = new Administrador(id, nombre, apellidos, nacionalidad, fechaNacimiento, edad, genero, correo, direccion, contrasena);
+        Tripulante tripulante = new Tripulante(id, nombre, apellidos, nacionalidad, fechaNacimiento, edad, genero, correo, direccion, contrasena, aniosExperiencia, fechaGraduacion, numeroLicencia, puesto, telefono);
 
-        return administrador;
+        return tripulante;
     }
 
     /**
-     * Metodo para actualizar el TableView de los administradores
+     * Metodo para actualizar el TableView de los tripulantes
      */
-    public void cargarListaAdministradores () {
+    public void cargarListaTripulantes () {
         GestorPersonas gestorPersonas = new GestorPersonas();
-        listaAdministradores.getItems().clear();
-        observableAdministradores = FXCollections.observableArrayList();
-        gestorPersonas.listarAdministradores().forEach(administrador -> observableAdministradores.addAll(administrador));
-        tId.setCellValueFactory(new PropertyValueFactory<Administrador,String>("id"));
-        tNombre.setCellValueFactory(new PropertyValueFactory<Administrador,String>("nombre"));
-        tApellidos.setCellValueFactory(new PropertyValueFactory<Administrador,String>("apellidos"));
-        tFechaNac.setCellValueFactory(new PropertyValueFactory<Administrador, LocalDate>("fechaNacimiento"));
-        tGenero.setCellValueFactory(new PropertyValueFactory<Administrador,String>("genero"));
-        tNacionalidad.setCellValueFactory(new PropertyValueFactory<Administrador,String>("nacionalidad"));
-        tCorreo.setCellValueFactory(new PropertyValueFactory<Administrador,String>("correoElectronico"));
-        listaAdministradores.setItems(observableAdministradores);
+        listaTripulantes.getItems().clear();
+        observableTripulantes = FXCollections.observableArrayList();
+        gestorPersonas.listarTripulantes().forEach(tripulante -> observableTripulantes.addAll(tripulante));
+        tId.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("id"));
+        tNombre.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("nombre"));
+        tApellidos.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("apellidos"));
+        tFechaNac.setCellValueFactory(new PropertyValueFactory<Tripulante, LocalDate>("fechaNacimiento"));
+        tGenero.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("genero"));
+        tNacionalidad.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("nacionalidad"));
+        tCorreo.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("correoElectronico"));
+        listaTripulantes.setItems(observableTripulantes);
     }
 
     /**
      * Metodo para resetear los valores dem los TextField
      */
     public void resetearValores() {
-        cargarListaAdministradores ();
+        cargarListaTripulantes ();
         idText.setText("");
         nombreText.setText("");
         apellidosText.setText("");
@@ -231,11 +253,16 @@ public class ControladorAdministrador {
         cantonText.setText("");
         distritoText.setText("");
         detalleText.setText("");
+        aniosExpText.setText("");
+        fechaGradDatePicker.setValue(null);
+        numeroLicenciaText.setText("");
+        puestoText.setText("");
+        telefonoText.setText("");
         passField.setText("");
     }
 
     /**
-     * Metodo para obtener el genero del administrador de los RadioButton
+     * Metodo para obtener el genero del tripulante de los RadioButton
      */
     public String obtenerGenero (){
         String genero = "";
@@ -258,7 +285,7 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para mostrar una alerta al usuario
+     * Metodo para mostrar una alerta al tripulante
      * @param alertType es de tipo Alert.AlertType y corresponde al tipo de alerta
      * @param title es tipo String y corresponde al título de la alerta
      * @param message  es de tipo String y corresponde al mensaje de la alerta
@@ -278,7 +305,7 @@ public class ControladorAdministrador {
     public void initialize()
     {
         try {
-            cargarListaAdministradores ();
+            cargarListaTripulantes ();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -299,11 +326,11 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para ir a la pantalla de usuarios
+     * Metodo para ir a la pantalla de administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void usuarios (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
+    public void administradores (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Administrador.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -313,11 +340,11 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para ir a la pantalla de tripulantes
+     * Metodo para ir a la pantalla de usuarios
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void tripulantes (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulante.fxml"));
+    public void usuarios (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

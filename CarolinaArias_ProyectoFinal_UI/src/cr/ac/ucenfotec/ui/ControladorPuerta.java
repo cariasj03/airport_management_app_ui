@@ -1,9 +1,9 @@
 package cr.ac.ucenfotec.ui;
 
-import cr.ac.ucenfotec.entidades.Aeropuerto;
-import cr.ac.ucenfotec.entidades.Pais;
-import cr.ac.ucenfotec.logica.GestorAeropuertos;
-import cr.ac.ucenfotec.logica.GestorPaises;
+import cr.ac.ucenfotec.entidades.Puerta;
+import cr.ac.ucenfotec.entidades.Ubicacion;
+import cr.ac.ucenfotec.logica.GestorPuertas;
+import cr.ac.ucenfotec.logica.GestorUbicaciones;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+
 import java.io.IOException;
 
 /**
@@ -24,80 +25,77 @@ import java.io.IOException;
  * @version 1.0
  * @since 24/11/2022
  *
- * Esta clase se encarga de gestionar el formulario FXML de Aeropuertos
+ * Esta clase se encarga de gestionar el formulario FXML de Puertas
  */
-public class ControladorAeropuerto {
+public class ControladorPuerta {
     private Stage stage;
     private Scene scene;
     private Parent root;
     public TextField nombreText;
     public TextField codigoText;
     @FXML
-    TableView<Aeropuerto> listaAeropuertos;
+    TableView<Puerta> listaPuertas;
     @FXML
-    TableColumn<Aeropuerto,String> tNombre;
+    TableColumn<Puerta,String> tNombre;
     @FXML
-    TableColumn<Aeropuerto,String> tCodigo;
+    TableColumn<Puerta,String> tCodigo;
     @FXML
-    public ObservableList<Aeropuerto> observableAeropuertos;
-    public ComboBox<Pais> paisCB;
+    public ObservableList<Puerta> observablePuertas;
+    public ComboBox<Ubicacion> ubicacionCB;
     @FXML
-    public ObservableList<Pais> observablePaises;
+    public ObservableList<Ubicacion> observableUbicaciones;
 
 
     /**
-     * Metodo para registrar un aeropuerto
+     * Metodo para registrar una puerta
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void registrar (ActionEvent actionEvent) {
-        if (nombreText.getText().isEmpty() || codigoText.getText().isEmpty() || paisCB.getValue() == null) {
+        if (codigoText.getText().isEmpty() || nombreText.getText().isEmpty() || ubicacionCB.getValue() == null) {
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
         } else {
-            if (codigoText.getText().length() != 3) {
-                showAlert(Alert.AlertType.ERROR, "Revise el código del aeropuerto.", "El código del aeropuerto no tiene el formato adecuado.\nEl código debe estar conformado de exactamente 3 letras.");
-            } else {
-                GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-                Aeropuerto aeropuerto = obtenerAeropuerto();
-                String mensaje = gestorAeropuertos.insertarAeropuerto(aeropuerto);
-                if (mensaje.equals("El aeropuerto fue registrado con éxito.")) {
+                GestorPuertas gestorPuertas = new GestorPuertas();
+                Puerta puerta = obtenerPuerta();
+                String mensaje = gestorPuertas.insertarPuerta(puerta);
+                if (mensaje.equals("La puerta fue registrada con éxito.")) {
                     showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
                     resetearValores();
-                    cargarListaAeropuertos();
+                    cargarListaPuertas();
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
                 }
             }
-        }
     }
 
     /**
-     * Metodo para obtener los valores de un aeropuerto en los TextField
+     * Metodo para obtener los valores de una puerta en los TextField
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
-            Aeropuerto aeropuerto = (Aeropuerto) listaAeropuertos.getSelectionModel().getSelectedItem();
-            nombreText.setText(aeropuerto.getNombre());
-            codigoText.setText(aeropuerto.getCodigo());
+            Puerta puerta = (Puerta) listaPuertas.getSelectionModel().getSelectedItem();
+            nombreText.setText(puerta.getNombre());
+            codigoText.setText(puerta.getCodigo());
+            ubicacionCB.getSelectionModel().select(puerta.getUbicacion());
         }
     }
 
     /**
-     * Metodo para actualizar un aeropuerto
+     * Metodo para actualizar una puerta
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void actualizarAeropuerto (ActionEvent actionEvent) {
-        if(nombreText.getText().isEmpty() || codigoText.getText().isEmpty() || paisCB.getValue() == null)
+    public void actualizarPuerta (ActionEvent actionEvent) {
+        if(nombreText.getText().isEmpty() || codigoText.getText().isEmpty() || ubicacionCB.getValue() == null)
         {
             showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
         } else {
-            GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-            Aeropuerto aeropuerto = obtenerAeropuerto();
-            String mensaje = gestorAeropuertos.actualizarAeropuerto(aeropuerto);
-            if(mensaje.equals("El aeropuerto fue actualizado con éxito."))
+            GestorPuertas gestorPuertas = new GestorPuertas();
+            Puerta puerta = obtenerPuerta();
+            String mensaje = gestorPuertas.actualizarPuerta(puerta);
+            if(mensaje.equals("La puerta fue actualizada con éxito."))
             {
                 showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAeropuertos ();
+                cargarListaPuertas ();
             } else {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
@@ -105,21 +103,21 @@ public class ControladorAeropuerto {
     }
 
     /**
-     * Metodo para eliminar un aeropuerto
+     * Metodo para eliminar una puerta
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void eliminarAeropuerto (ActionEvent actionEvent) {
-        if(listaAeropuertos.getSelectionModel().getSelectedItem() == null)
+    public void eliminarPuerta (ActionEvent actionEvent) {
+        if(listaPuertas.getSelectionModel().getSelectedItem() == null)
         {
-            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún aeropuerto.","No ha seleccionado ningún aeropuerto.\nPor favor seleccione un aeropuerto para eliminar.");
+            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna puerta.","No ha seleccionado ninguna puerta.\nPor favor seleccione una puerta para eliminar.");
         } else {
-            GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-            Aeropuerto aeropuerto = (Aeropuerto) listaAeropuertos.getSelectionModel().getSelectedItem();
-            String mensaje = gestorAeropuertos.eliminarAeropuerto(aeropuerto);
-            if(mensaje.equals("El aeropuerto fue eliminado con éxito."))
+            GestorPuertas gestorPuertas = new GestorPuertas();
+            Puerta puerta = (Puerta) listaPuertas.getSelectionModel().getSelectedItem();
+            String mensaje = gestorPuertas.eliminarPuerta(puerta);
+            if(mensaje.equals("La puerta fue eliminada con éxito."))
             {
                 showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAeropuertos();
+                cargarListaPuertas();
             } else {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
@@ -127,39 +125,39 @@ public class ControladorAeropuerto {
     }
 
     /**
-     * Metodo para obtener los datos de un aeropuerto de los TextField
+     * Metodo para obtener los datos de una puerta de los TextField
      */
-    public Aeropuerto obtenerAeropuerto() {
-        String nombre = nombreText.getText();
+    public Puerta obtenerPuerta() {
         String codigo = codigoText.getText();
-        Pais pais = (Pais) paisCB.getValue();
-        Aeropuerto aeropuerto = new Aeropuerto(nombre, codigo, pais);
+        String nombre = nombreText.getText();
+        Ubicacion ubicacion = (Ubicacion) ubicacionCB.getValue();
+        Puerta puerta = new Puerta(codigo, nombre, ubicacion);
 
-        return aeropuerto;
+        return puerta;
     }
 
     /**
      * Metodo para resetear los valores dem los TextField
      */
     public void resetearValores() {
-        cargarListaAeropuertos();
+        cargarListaPuertas();
         nombreText.setText("");
         codigoText.setText("");
-        paisCB.getSelectionModel().clearSelection();
+        ubicacionCB.getSelectionModel().clearSelection();
     }
 
     /**
-     * Metodo para actualizar el TableView de los aeropuertos
+     * Metodo para actualizar el TableView de las puertas
      */
-    public void cargarListaAeropuertos () {
-        GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-        listaAeropuertos.getItems().clear();
-        observableAeropuertos = FXCollections.observableArrayList();
-        gestorAeropuertos.listarAeropuertos().forEach(aeropuerto -> observableAeropuertos.addAll(aeropuerto));
-        observableAeropuertos = FXCollections.observableArrayList(gestorAeropuertos.listarAeropuertos());
-        tNombre.setCellValueFactory(new PropertyValueFactory<Aeropuerto,String>("nombre"));
-        tCodigo.setCellValueFactory(new PropertyValueFactory<Aeropuerto,String>("codigo"));
-        listaAeropuertos.setItems(observableAeropuertos);
+    public void cargarListaPuertas () {
+        GestorPuertas gestorPuertas = new GestorPuertas();
+        listaPuertas.getItems().clear();
+        observablePuertas = FXCollections.observableArrayList();
+        gestorPuertas.listarPuertas().forEach(puerta -> observablePuertas.addAll(puerta));
+        observablePuertas = FXCollections.observableArrayList(gestorPuertas.listarPuertas());
+        tCodigo.setCellValueFactory(new PropertyValueFactory<Puerta,String>("codigo"));
+        tNombre.setCellValueFactory(new PropertyValueFactory<Puerta,String>("nombre"));
+        listaPuertas.setItems(observablePuertas);
         cargarComboBoxes();
     }
 
@@ -167,29 +165,29 @@ public class ControladorAeropuerto {
      * Metodo para actualizar los ComboBoxes
      */
     public void cargarComboBoxes () {
-        GestorPaises gestorPaises = new GestorPaises();
-        observablePaises = FXCollections.observableArrayList(gestorPaises.listarPaises());
-        paisCB.setItems(observablePaises);
-        Callback<ListView<Pais>, ListCell<Pais>> cellFactory = new Callback<>() {
+        GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
+        observableUbicaciones = FXCollections.observableArrayList(gestorUbicaciones.listarUbicaciones());
+        ubicacionCB.setItems(observableUbicaciones);
+        Callback<ListView<Ubicacion>, ListCell<Ubicacion>> cellFactory = new Callback<>() {
 
             @Override
-            public ListCell<Pais> call(ListView<Pais> l) {
+            public ListCell<Ubicacion> call(ListView<Ubicacion> l) {
                 return new ListCell<>() {
                     @Override
-                    protected void updateItem(Pais item, boolean empty) {
+                    protected void updateItem(Ubicacion item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item == null || empty) {
                             setGraphic(null);
                         } else {
-                            setText("(" + item.getCodigo()+ ") " + item.getNombre());
+                            setText("(" + item.getCodigo()+ ") - Nivel " + item.getNivel());
                         }
                     }
                 };
             }
         };
 
-        paisCB.setButtonCell(cellFactory.call(null));
-        paisCB.setCellFactory(cellFactory);
+        ubicacionCB.setButtonCell(cellFactory.call(null));
+        ubicacionCB.setCellFactory(cellFactory);
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -206,7 +204,7 @@ public class ControladorAeropuerto {
     @FXML
     public void initialize() {
         try {
-            cargarListaAeropuertos ();
+            cargarListaPuertas ();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -287,7 +285,21 @@ public class ControladorAeropuerto {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void paises (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Pais.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Ubicacion.fxml"));
+        root = loader.load();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de aeropuertos
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void aeropuertos (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Aeropuerto.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -316,20 +328,6 @@ public class ControladorAeropuerto {
      */
     public void ubicaciones (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Ubicacion.fxml"));
-        root = loader.load();
-
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    /**
-     * Metodo para ir a la pantalla de puertas
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
-     */
-    public void puertas (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Puerta.fxml"));
         root = loader.load();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
