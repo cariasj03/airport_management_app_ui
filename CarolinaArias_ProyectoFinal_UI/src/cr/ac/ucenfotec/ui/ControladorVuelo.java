@@ -1,6 +1,7 @@
 package cr.ac.ucenfotec.ui;
 
 import cr.ac.ucenfotec.entidades.Aeropuerto;
+import cr.ac.ucenfotec.entidades.Persona;
 import cr.ac.ucenfotec.entidades.Vuelo;
 import cr.ac.ucenfotec.logica.GestorAeropuertos;
 import cr.ac.ucenfotec.logica.GestorVuelos;
@@ -68,6 +69,15 @@ public class ControladorVuelo {
     public ObservableList<Vuelo> observableVuelos;
     @FXML
     public ObservableList<Aeropuerto> observableAeropuertos;
+    private Persona personaSesion;
+
+    //Getter y setter para la persona en sesion
+    public Persona getPersonaSesion() {
+        return personaSesion;
+    }
+    public void setPersonaSesion(Persona personaSesion) {
+        this.personaSesion = personaSesion;
+    }
 
     /**
      * Metodo para registrar un vuelo
@@ -156,6 +166,7 @@ public class ControladorVuelo {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void eliminarVuelo(ActionEvent actionEvent) {
+        try {
         if(listaVuelos.getSelectionModel().getSelectedItem() == null)
         {
             showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún vuelo.","No ha seleccionado ningún vuelo.\nPor favor seleccione un vuelo para eliminar.");
@@ -170,6 +181,9 @@ public class ControladorVuelo {
             } else {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
+        }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
         }
     }
 
@@ -187,9 +201,7 @@ public class ControladorVuelo {
         Double montoImpuesto = Double.parseDouble(impuestoText.getText());
         Aeropuerto aeropuertoOrigen = (Aeropuerto) aeropuertoOrigenCB.getValue();
         Aeropuerto aeropuertoDestino = (Aeropuerto) aeropuertoDestinoCB.getValue();
-
         Vuelo vuelo = new Vuelo(numVuelo, horaSalida, horaLlegada, estado, tipoVuelo, cantAsientosDisponibles, precioAsientos, montoImpuesto, aeropuertoOrigen, aeropuertoDestino);
-
         return vuelo;
     }
 
@@ -234,6 +246,7 @@ public class ControladorVuelo {
      * Metodo para actualizar el TableView de los vuelos
      */
     public void cargarListaVuelos(){
+        try {
         GestorVuelos gestorVuelos = new GestorVuelos();
         GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
         listaVuelos.getItems().clear();
@@ -277,6 +290,9 @@ public class ControladorVuelo {
         aeropuertoOrigenCB.setCellFactory(cellFactory);
         aeropuertoDestinoCB.setButtonCell(cellFactory.call(null));
         aeropuertoDestinoCB.setCellFactory(cellFactory);
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
@@ -307,12 +323,15 @@ public class ControladorVuelo {
     }
 
     /**
-     * Metodo para ir a la pantalla de inicio
+     * Metodo para ir a la pantalla de inicio para administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void inicio (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Inicio.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdmin.fxml"));
         root = loader.load();
+        ControladorInicio controladorInicio = loader.getController();
+        controladorInicio.setPersonaSesion(personaSesion);
+        controladorInicio.mostrarNombrePersona();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -327,6 +346,8 @@ public class ControladorVuelo {
     public void administradores (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Administrador.fxml"));
         root = loader.load();
+        ControladorAdministrador controladorAdministrador = loader.getController();
+        controladorAdministrador.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -341,6 +362,8 @@ public class ControladorVuelo {
     public void usuarios (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
         root = loader.load();
+        ControladorUsuario controladorUsuario = loader.getController();
+        controladorUsuario.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -355,6 +378,8 @@ public class ControladorVuelo {
     public void tripulantes (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulante.fxml"));
         root = loader.load();
+        ControladorTripulante controladorTripulante = loader.getController();
+        controladorTripulante.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -367,8 +392,10 @@ public class ControladorVuelo {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void tripulaciones (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulacion.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionAdministrador.fxml"));
         root = loader.load();
+        ControladorTripulacion controladorTripulacion = loader.getController();
+        controladorTripulacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -383,6 +410,8 @@ public class ControladorVuelo {
     public void paises (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Pais.fxml"));
         root = loader.load();
+        ControladorPais controladorPais = loader.getController();
+        controladorPais.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -397,6 +426,40 @@ public class ControladorVuelo {
     public void aeropuertos (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Aeropuerto.fxml"));
         root = loader.load();
+        ControladorAeropuerto controladorAeropuerto = loader.getController();
+        controladorAeropuerto.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de aerolineas
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void aerolineas (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Aerolinea.fxml"));
+        root = loader.load();
+        ControladorAerolinea controladorAerolinea = loader.getController();
+        controladorAerolinea.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de vuelos
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void vuelos (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("VueloAdministrador.fxml"));
+        root = loader.load();
+        ControladorVuelo controladorVuelo = loader.getController();
+        controladorVuelo.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -411,6 +474,8 @@ public class ControladorVuelo {
     public void ubicaciones (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Ubicacion.fxml"));
         root = loader.load();
+        ControladorUbicacion controladorUbicacion = loader.getController();
+        controladorUbicacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -425,6 +490,8 @@ public class ControladorVuelo {
     public void puertas (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Puerta.fxml"));
         root = loader.load();
+        ControladorPuerta controladorPuerta = loader.getController();
+        controladorPuerta.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

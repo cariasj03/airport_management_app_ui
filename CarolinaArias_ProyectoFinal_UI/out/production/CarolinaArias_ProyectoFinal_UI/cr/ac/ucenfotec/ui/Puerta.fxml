@@ -50,6 +50,11 @@
                   <Font size="10.0" />
                </font>
             </Button>
+            <Button mnemonicParsing="false" onAction="#aerolineas" text="Aerolíneas">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
             <Button mnemonicParsing="false" onAction="#vuelos" text="Vuelos">
                <font>
                   <Font size="10.0" />
@@ -84,8 +89,9 @@
       <Button layoutX="481.0" layoutY="220.0" mnemonicParsing="false" onAction="#registrar" text="Registrar" />
       <TableView fx:id="listaPuertas" layoutX="76.0" layoutY="282.0" onMousePressed="#dobleClick" prefHeight="217.0" prefWidth="650.0">
         <columns>
-          <TableColumn fx:id="tCodigo" prefWidth="217.60004425048828" text="Codigo" />
-          <TableColumn fx:id="tNombre" prefWidth="431.20001831054685" text="Nombre" />
+          <TableColumn fx:id="tCodigo" prefWidth="147.99994659423828" text="Codigo" />
+          <TableColumn fx:id="tNombre" prefWidth="269.60003662109375" text="Nombre" />
+            <TableColumn fx:id="tUbicacion" prefWidth="228.00003051757812" text="Ubicación" />
         </columns>
       </TableView>
       <Button layoutX="367.0" layoutY="220.0" mnemonicParsing="false" onAction="#actualizarPuerta" text="Actualizar" />

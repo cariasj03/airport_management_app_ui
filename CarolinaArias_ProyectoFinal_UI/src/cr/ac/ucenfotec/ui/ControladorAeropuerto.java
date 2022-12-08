@@ -2,8 +2,10 @@ package cr.ac.ucenfotec.ui;
 
 import cr.ac.ucenfotec.entidades.Aeropuerto;
 import cr.ac.ucenfotec.entidades.Pais;
+import cr.ac.ucenfotec.entidades.Persona;
 import cr.ac.ucenfotec.logica.GestorAeropuertos;
 import cr.ac.ucenfotec.logica.GestorPaises;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -39,10 +41,21 @@ public class ControladorAeropuerto {
     @FXML
     TableColumn<Aeropuerto,String> tCodigo;
     @FXML
+    TableColumn<Aeropuerto,String> tPais;
+    @FXML
     public ObservableList<Aeropuerto> observableAeropuertos;
     public ComboBox<Pais> paisCB;
     @FXML
     public ObservableList<Pais> observablePaises;
+    private Persona personaSesion;
+
+    //Getter y setter para la persona en sesion
+    public Persona getPersonaSesion() {
+        return personaSesion;
+    }
+    public void setPersonaSesion(Persona personaSesion) {
+        this.personaSesion = personaSesion;
+    }
 
 
     /**
@@ -50,6 +63,7 @@ public class ControladorAeropuerto {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void registrar (ActionEvent actionEvent) {
+        try {
         if (nombreText.getText().isEmpty() || codigoText.getText().isEmpty() || paisCB.getValue() == null) {
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
         } else {
@@ -68,6 +82,9 @@ public class ControladorAeropuerto {
                 }
             }
         }
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
@@ -75,10 +92,15 @@ public class ControladorAeropuerto {
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
+        try {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
             Aeropuerto aeropuerto = (Aeropuerto) listaAeropuertos.getSelectionModel().getSelectedItem();
             nombreText.setText(aeropuerto.getNombre());
             codigoText.setText(aeropuerto.getCodigo());
+            paisCB.getSelectionModel().select(aeropuerto.getPais());
+        }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
         }
     }
 
@@ -87,6 +109,7 @@ public class ControladorAeropuerto {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void actualizarAeropuerto (ActionEvent actionEvent) {
+        try {
         if(nombreText.getText().isEmpty() || codigoText.getText().isEmpty() || paisCB.getValue() == null)
         {
             showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
@@ -102,6 +125,9 @@ public class ControladorAeropuerto {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
         }
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
@@ -109,6 +135,7 @@ public class ControladorAeropuerto {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void eliminarAeropuerto (ActionEvent actionEvent) {
+        try {
         if(listaAeropuertos.getSelectionModel().getSelectedItem() == null)
         {
             showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún aeropuerto.","No ha seleccionado ningún aeropuerto.\nPor favor seleccione un aeropuerto para eliminar.");
@@ -124,6 +151,9 @@ public class ControladorAeropuerto {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
         }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
+        }
     }
 
     /**
@@ -134,7 +164,6 @@ public class ControladorAeropuerto {
         String codigo = codigoText.getText();
         Pais pais = (Pais) paisCB.getValue();
         Aeropuerto aeropuerto = new Aeropuerto(nombre, codigo, pais);
-
         return aeropuerto;
     }
 
@@ -152,6 +181,7 @@ public class ControladorAeropuerto {
      * Metodo para actualizar el TableView de los aeropuertos
      */
     public void cargarListaAeropuertos () {
+        try {
         GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
         listaAeropuertos.getItems().clear();
         observableAeropuertos = FXCollections.observableArrayList();
@@ -159,14 +189,19 @@ public class ControladorAeropuerto {
         observableAeropuertos = FXCollections.observableArrayList(gestorAeropuertos.listarAeropuertos());
         tNombre.setCellValueFactory(new PropertyValueFactory<Aeropuerto,String>("nombre"));
         tCodigo.setCellValueFactory(new PropertyValueFactory<Aeropuerto,String>("codigo"));
+        tPais.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPais().getNombre()));
         listaAeropuertos.setItems(observableAeropuertos);
         cargarComboBoxes();
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
      * Metodo para actualizar los ComboBoxes
      */
     public void cargarComboBoxes () {
+        try {
         GestorPaises gestorPaises = new GestorPaises();
         observablePaises = FXCollections.observableArrayList(gestorPaises.listarPaises());
         paisCB.setItems(observablePaises);
@@ -190,6 +225,9 @@ public class ControladorAeropuerto {
 
         paisCB.setButtonCell(cellFactory.call(null));
         paisCB.setCellFactory(cellFactory);
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -213,12 +251,15 @@ public class ControladorAeropuerto {
     }
 
     /**
-     * Metodo para ir a la pantalla de inicio
+     * Metodo para ir a la pantalla de inicio para administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void inicio (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Inicio.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdmin.fxml"));
         root = loader.load();
+        ControladorInicio controladorInicio = loader.getController();
+        controladorInicio.setPersonaSesion(personaSesion);
+        controladorInicio.mostrarNombrePersona();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -233,6 +274,8 @@ public class ControladorAeropuerto {
     public void administradores (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Administrador.fxml"));
         root = loader.load();
+        ControladorAdministrador controladorAdministrador = loader.getController();
+        controladorAdministrador.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -247,6 +290,8 @@ public class ControladorAeropuerto {
     public void usuarios (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
         root = loader.load();
+        ControladorUsuario controladorUsuario = loader.getController();
+        controladorUsuario.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -261,6 +306,8 @@ public class ControladorAeropuerto {
     public void tripulantes (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulante.fxml"));
         root = loader.load();
+        ControladorTripulante controladorTripulante = loader.getController();
+        controladorTripulante.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -273,8 +320,10 @@ public class ControladorAeropuerto {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void tripulaciones (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulacion.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionAdministrador.fxml"));
         root = loader.load();
+        ControladorTripulacion controladorTripulacion = loader.getController();
+        controladorTripulacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -289,6 +338,40 @@ public class ControladorAeropuerto {
     public void paises (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Pais.fxml"));
         root = loader.load();
+        ControladorPais controladorPais = loader.getController();
+        controladorPais.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de aeropuertos
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void aeropuertos (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Aeropuerto.fxml"));
+        root = loader.load();
+        ControladorAeropuerto controladorAeropuerto = loader.getController();
+        controladorAeropuerto.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de aerolineas
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void aerolineas (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Aerolinea.fxml"));
+        root = loader.load();
+        ControladorAerolinea controladorAerolinea = loader.getController();
+        controladorAerolinea.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -301,8 +384,10 @@ public class ControladorAeropuerto {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void vuelos (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Vuelo.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("VueloAdministrador.fxml"));
         root = loader.load();
+        ControladorVuelo controladorVuelo = loader.getController();
+        controladorVuelo.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -317,6 +402,8 @@ public class ControladorAeropuerto {
     public void ubicaciones (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Ubicacion.fxml"));
         root = loader.load();
+        ControladorUbicacion controladorUbicacion = loader.getController();
+        controladorUbicacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -331,6 +418,8 @@ public class ControladorAeropuerto {
     public void puertas (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Puerta.fxml"));
         root = loader.load();
+        ControladorPuerta controladorPuerta = loader.getController();
+        controladorPuerta.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

@@ -2,6 +2,7 @@ package cr.ac.ucenfotec.ui;
 
 import cr.ac.ucenfotec.entidades.Administrador;
 import cr.ac.ucenfotec.entidades.Direccion;
+import cr.ac.ucenfotec.entidades.Persona;
 import cr.ac.ucenfotec.logica.GestorPersonas;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -69,6 +70,17 @@ public class ControladorAdministrador {
     TableColumn<Administrador, String> tCorreo;
     @FXML
     public ObservableList<Administrador> observableAdministradores;
+    private ControladorInicio controladorInicio = new ControladorInicio();
+    private Persona personaSesion;
+
+    //Getter y setter para la persona en sesion
+    public Persona getPersonaSesion() {
+        return personaSesion;
+    }
+    public void setPersonaSesion(Persona personaSesion) {
+        this.personaSesion = personaSesion;
+    }
+
 
     /**
      * Metodo para registrar un administrador
@@ -101,6 +113,7 @@ public class ControladorAdministrador {
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
+        try {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
             Administrador administrador = (Administrador) listaAdministradores.getSelectionModel().getSelectedItem();
             idText.setText(administrador.getId());
@@ -126,6 +139,9 @@ public class ControladorAdministrador {
                 }
             }
         }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
+        }
     }
 
     /**
@@ -134,6 +150,7 @@ public class ControladorAdministrador {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void actualizarAdministrador(ActionEvent actionEvent) {
+        try {
         if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
         } else {
@@ -147,6 +164,9 @@ public class ControladorAdministrador {
                 showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
             }
         }
+        } catch (DateTimeParseException dfe) {
+            showAlert(Alert.AlertType.ERROR,"La fecha no tiene un formato adecuado.","La fecha no tiene un formato adecuado.\nPor favor digítela con el formato adecuado.");
+        }
     }
 
     /**
@@ -155,6 +175,7 @@ public class ControladorAdministrador {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void eliminarAdministrador(ActionEvent actionEvent) {
+        try {
         if (listaAdministradores.getSelectionModel().getSelectedItem() == null) {
             showAlert(Alert.AlertType.ERROR, "No ha seleccionado ningún administrador.", "No ha seleccionado ningún administrador.\nPor favor seleccione un administrador para eliminar.");
         } else {
@@ -167,6 +188,9 @@ public class ControladorAdministrador {
             } else {
                 showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
             }
+        }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
         }
     }
 
@@ -191,7 +215,6 @@ public class ControladorAdministrador {
         String contrasena = passField.getText();
         Direccion direccion = new Direccion(provincia, canton, distrito, detalle);
         Administrador administrador = new Administrador(id, nombre, apellidos, nacionalidad, fechaNacimiento, edad, genero, correo, direccion, contrasena);
-
         return administrador;
     }
 
@@ -199,6 +222,7 @@ public class ControladorAdministrador {
      * Metodo para actualizar el TableView de los administradores
      */
     public void cargarListaAdministradores () {
+        try {
         GestorPersonas gestorPersonas = new GestorPersonas();
         listaAdministradores.getItems().clear();
         observableAdministradores = FXCollections.observableArrayList();
@@ -211,6 +235,9 @@ public class ControladorAdministrador {
         tNacionalidad.setCellValueFactory(new PropertyValueFactory<Administrador,String>("nacionalidad"));
         tCorreo.setCellValueFactory(new PropertyValueFactory<Administrador,String>("correoElectronico"));
         listaAdministradores.setItems(observableAdministradores);
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
@@ -285,12 +312,31 @@ public class ControladorAdministrador {
     }
 
     /**
-     * Metodo para ir a la pantalla de inicio
+     * Metodo para ir a la pantalla de inicio para administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void inicio (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Inicio.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdmin.fxml"));
         root = loader.load();
+        ControladorInicio controladorInicio = loader.getController();
+        controladorInicio.setPersonaSesion(personaSesion);
+        controladorInicio.mostrarNombrePersona();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de administradores
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void administradores (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Administrador.fxml"));
+        root = loader.load();
+        ControladorAdministrador controladorAdministrador = loader.getController();
+        controladorAdministrador.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -305,6 +351,8 @@ public class ControladorAdministrador {
     public void usuarios (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
         root = loader.load();
+        ControladorUsuario controladorUsuario = loader.getController();
+        controladorUsuario.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -319,6 +367,8 @@ public class ControladorAdministrador {
     public void tripulantes (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulante.fxml"));
         root = loader.load();
+        ControladorTripulante controladorTripulante = loader.getController();
+        controladorTripulante.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -331,8 +381,10 @@ public class ControladorAdministrador {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void tripulaciones (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulacion.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionAdministrador.fxml"));
         root = loader.load();
+        ControladorTripulacion controladorTripulacion = loader.getController();
+        controladorTripulacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -347,6 +399,8 @@ public class ControladorAdministrador {
     public void paises (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Pais.fxml"));
         root = loader.load();
+        ControladorPais controladorPais = loader.getController();
+        controladorPais.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -361,6 +415,24 @@ public class ControladorAdministrador {
     public void aeropuertos (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Aeropuerto.fxml"));
         root = loader.load();
+        ControladorAeropuerto controladorAeropuerto = loader.getController();
+        controladorAeropuerto.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de aerolineas
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void aerolineas (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Aerolinea.fxml"));
+        root = loader.load();
+        ControladorAerolinea controladorAerolinea = loader.getController();
+        controladorAerolinea.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -373,8 +445,10 @@ public class ControladorAdministrador {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void vuelos (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Vuelo.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("VueloAdministrador.fxml"));
         root = loader.load();
+        ControladorVuelo controladorVuelo = loader.getController();
+        controladorVuelo.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -389,6 +463,8 @@ public class ControladorAdministrador {
     public void ubicaciones (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Ubicacion.fxml"));
         root = loader.load();
+        ControladorUbicacion controladorUbicacion = loader.getController();
+        controladorUbicacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -403,6 +479,8 @@ public class ControladorAdministrador {
     public void puertas (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Puerta.fxml"));
         root = loader.load();
+        ControladorPuerta controladorPuerta = loader.getController();
+        controladorPuerta.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

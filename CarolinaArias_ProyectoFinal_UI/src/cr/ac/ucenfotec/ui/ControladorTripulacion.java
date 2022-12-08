@@ -1,6 +1,6 @@
 package cr.ac.ucenfotec.ui;
 
-import cr.ac.ucenfotec.entidades.Aeropuerto;
+import cr.ac.ucenfotec.entidades.Persona;
 import cr.ac.ucenfotec.entidades.Tripulacion;
 import cr.ac.ucenfotec.entidades.Tripulante;
 import cr.ac.ucenfotec.logica.GestorPersonas;
@@ -18,7 +18,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-
 import java.io.IOException;
 import java.time.LocalDate;
 
@@ -63,9 +62,18 @@ public class ControladorTripulacion {
     public ObservableList<Tripulante> observableTripulantes;
     public ComboBox<Tripulacion> tripulacionCB;
     public ComboBox<Tripulante> tripulanteCB;
+    private Persona personaSesion;
 
+    //Getter y setter para la persona en sesion
+    public Persona getPersonaSesion() {
+        return personaSesion;
+    }
+    public void setPersonaSesion(Persona personaSesion) {
+        this.personaSesion = personaSesion;
+    }
 
     public void registrar (ActionEvent actionEvent) {
+        try {
         if (codigoText.getText().isEmpty() || nombreClaveText.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
         } else {
@@ -81,6 +89,9 @@ public class ControladorTripulacion {
                     showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
                 }
         }
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
@@ -88,10 +99,14 @@ public class ControladorTripulacion {
      * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
      */
     public void dobleClick(MouseEvent mouseEvent) {
+        try {
         if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
             Tripulacion tripulacion = (Tripulacion) listaTripulaciones.getSelectionModel().getSelectedItem();
             codigoText.setText(tripulacion.getCodigo());
             nombreClaveText.setText(tripulacion.getNombreClave());
+        }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
         }
     }
 
@@ -100,6 +115,7 @@ public class ControladorTripulacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void actualizarTripulacion (ActionEvent actionEvent) {
+        try {
         if(codigoText.getText().isEmpty() || nombreClaveText.getText().isEmpty())
         {
             showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
@@ -115,6 +131,9 @@ public class ControladorTripulacion {
                 showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
             }
         }
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
@@ -122,6 +141,7 @@ public class ControladorTripulacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void eliminarTripulacion (ActionEvent actionEvent) {
+        try {
         GestorTripulaciones gestorTripulaciones = new GestorTripulaciones();
         Tripulacion tripulacion = new Tripulacion();
         if(listaTripulaciones.getSelectionModel().getSelectedItem() == null)
@@ -142,6 +162,9 @@ public class ControladorTripulacion {
                 }
             }
         }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
+        }
     }
 
     /**
@@ -149,6 +172,7 @@ public class ControladorTripulacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void agregarTripulante (ActionEvent actionEvent) {
+        try {
         if (tripulacionCB.getValue() == null || tripulanteCB.getValue() == null){
             showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin seleccionar.", "Debe seleccionar tanto la tripulación como el tripulante para realizar esta acción.");
         } else {
@@ -163,6 +187,9 @@ public class ControladorTripulacion {
                 cargarListaTripulantes(actionEvent);
             }
         }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor seleccione todos los campos necesarios.");
+        }
     }
 
     /**
@@ -170,6 +197,7 @@ public class ControladorTripulacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void eliminarTripulante (ActionEvent actionEvent) {
+        try {
         if(listaTripulantes.getSelectionModel().getSelectedItem() == null)
         {
             showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún tripulante.","No ha seleccionado ningún tripulante.\nPor favor seleccione un tripulante para eliminar.");
@@ -186,6 +214,9 @@ public class ControladorTripulacion {
                 cargarListaTripulantes(actionEvent);
             }
         }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor seleccione todos los campos necesarios.");
+        }
     }
 
     /**
@@ -195,7 +226,6 @@ public class ControladorTripulacion {
         String codigo = codigoText.getText();
         String nombreClave = nombreClaveText.getText();
         Tripulacion tripulacion = new Tripulacion(codigo, nombreClave);
-
         return tripulacion;
     }
 
@@ -212,6 +242,7 @@ public class ControladorTripulacion {
      * Metodo para actualizar el TableView de las tripulaciones
      */
     public void cargarListas () {
+        try {
         GestorTripulaciones gestorTripulaciones = new GestorTripulaciones();
         listaTripulaciones.getItems().clear();
         observableTripulaciones = FXCollections.observableArrayList();
@@ -221,12 +252,16 @@ public class ControladorTripulacion {
         tNombreClave.setCellValueFactory(new PropertyValueFactory<Tripulacion,String>("nombreClave"));
         listaTripulaciones.setItems(observableTripulaciones);
         cargarComboBoxes();
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
      * Metodo para actualizar los ComboBoxes
      */
     public void cargarComboBoxes () {
+        try {
         GestorPersonas gestorPersonas = new GestorPersonas();
         observableTripulantes = FXCollections.observableArrayList(gestorPersonas.listarTripulantes());
         tripulacionCB.setItems(observableTripulaciones);
@@ -271,12 +306,16 @@ public class ControladorTripulacion {
 
         tripulanteCB.setButtonCell(cellFactory1.call(null));
         tripulanteCB.setCellFactory(cellFactory1);
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
     }
 
     /**
      * Metodo para actualizar el TableView de los tripulantes
      */
     public void cargarListaTripulantes(ActionEvent actionEvent) {
+        try {
         GestorTripulaciones gestorTripulaciones = new GestorTripulaciones();
         Tripulacion tripulacionSeleccionada = (Tripulacion) tripulacionCB.getValue();
         listaTripulantes.getItems().clear();
@@ -293,6 +332,9 @@ public class ControladorTripulacion {
             tNacionalidad.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("nacionalidad"));
             tCorreo.setCellValueFactory(new PropertyValueFactory<Tripulante,String>("correoElectronico"));
             listaTripulantes.setItems(observableTripulantes);
+        }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor seleccione todos los campos necesarios.");
         }
     }
 
@@ -323,12 +365,15 @@ public class ControladorTripulacion {
     }
 
     /**
-     * Metodo para ir a la pantalla de inicio
+     * Metodo para ir a la pantalla de inicio para administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void inicio (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Inicio.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdmin.fxml"));
         root = loader.load();
+        ControladorInicio controladorInicio = loader.getController();
+        controladorInicio.setPersonaSesion(personaSesion);
+        controladorInicio.mostrarNombrePersona();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -343,6 +388,8 @@ public class ControladorTripulacion {
     public void administradores (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Administrador.fxml"));
         root = loader.load();
+        ControladorAdministrador controladorAdministrador = loader.getController();
+        controladorAdministrador.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -357,6 +404,8 @@ public class ControladorTripulacion {
     public void usuarios (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Usuario.fxml"));
         root = loader.load();
+        ControladorUsuario controladorUsuario = loader.getController();
+        controladorUsuario.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -371,6 +420,24 @@ public class ControladorTripulacion {
     public void tripulantes (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Tripulante.fxml"));
         root = loader.load();
+        ControladorTripulante controladorTripulante = loader.getController();
+        controladorTripulante.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de tripulaciones
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void tripulaciones (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionAdministrador.fxml"));
+        root = loader.load();
+        ControladorTripulacion controladorTripulacion = loader.getController();
+        controladorTripulacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -385,6 +452,8 @@ public class ControladorTripulacion {
     public void paises (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Pais.fxml"));
         root = loader.load();
+        ControladorPais controladorPais = loader.getController();
+        controladorPais.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -399,6 +468,24 @@ public class ControladorTripulacion {
     public void aeropuertos (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Aeropuerto.fxml"));
         root = loader.load();
+        ControladorAeropuerto controladorAeropuerto = loader.getController();
+        controladorAeropuerto.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de aerolineas
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void aerolineas (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Aerolinea.fxml"));
+        root = loader.load();
+        ControladorAerolinea controladorAerolinea = loader.getController();
+        controladorAerolinea.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -411,8 +498,10 @@ public class ControladorTripulacion {
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
     public void vuelos (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Vuelo.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("VueloAdministrador.fxml"));
         root = loader.load();
+        ControladorVuelo controladorVuelo = loader.getController();
+        controladorVuelo.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -427,6 +516,8 @@ public class ControladorTripulacion {
     public void ubicaciones (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Ubicacion.fxml"));
         root = loader.load();
+        ControladorUbicacion controladorUbicacion = loader.getController();
+        controladorUbicacion.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -441,6 +532,8 @@ public class ControladorTripulacion {
     public void puertas (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Puerta.fxml"));
         root = loader.load();
+        ControladorPuerta controladorPuerta = loader.getController();
+        controladorPuerta.setPersonaSesion(personaSesion);
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

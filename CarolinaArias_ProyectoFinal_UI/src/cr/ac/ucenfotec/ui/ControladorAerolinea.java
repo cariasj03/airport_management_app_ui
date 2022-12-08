@@ -1,10 +1,11 @@
 package cr.ac.ucenfotec.ui;
 
+import cr.ac.ucenfotec.entidades.Aerolinea;
 import cr.ac.ucenfotec.entidades.Persona;
-import cr.ac.ucenfotec.entidades.Ubicacion;
-import cr.ac.ucenfotec.logica.GestorUbicaciones;
+import cr.ac.ucenfotec.logica.GestorAerolineas;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,31 +14,42 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 /**
  * @author Carolina Arias
  * @version 1.0
  * @since 24/11/2022
  *
- * Esta clase se encarga de gestionar el formulario FXML de Ubicaciones
+ * Esta clase se encarga de gestionar el formulario FXML de Aerolineas
  */
-public class ControladorUbicacion {
+public class ControladorAerolinea {
     private Stage stage;
     private Scene scene;
     private Parent root;
-    public TextField codigoText;
-    public TextField nivelText;
+    public TextField cedulaText;
+    public TextField nombreText;
+    public TextField nombreEmpresaText;
     @FXML
-    TableView<Ubicacion> listaUbicaciones;
+    TableView<Aerolinea> listaAerolineas;
     @FXML
-    TableColumn<Ubicacion,String> tCodigo;
+    TableColumn<Aerolinea,Integer> tCedula;
     @FXML
-    TableColumn<Ubicacion, Integer> tNivel;
+    TableColumn<Aerolinea,String> tNombre;
     @FXML
-    public ObservableList<Ubicacion> observableUbicaciones;
+    TableColumn<Aerolinea,String> tNombreEmpresa;
+    @FXML
+    private ImageView logoIV;
+    @FXML
+    public ObservableList<Aerolinea> observableAerolineas;
+    File file;
     private Persona personaSesion;
 
     //Getter y setter para la persona en sesion
@@ -49,150 +61,212 @@ public class ControladorUbicacion {
     }
 
     /**
-     * Metodo para registrar una ubicacion
+     * Metodo para registrar una aerolinea
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void registrar (ActionEvent actionEvent) {
+    public void registrar (ActionEvent actionEvent) throws IOException {
         try {
-            if(codigoText.getText().isEmpty() || nivelText.getText().isEmpty())
-            {
-                showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-            } else {
-                GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
-                Ubicacion ubicacion = obtenerUbicacion();
-                String mensaje = gestorUbicaciones.insertarUbicacion(ubicacion);
-                if(mensaje.equals("La ubicación fue registrada con éxito."))
-                {
-                    showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+        if (cedulaText.getText().isEmpty() || nombreText.getText().isEmpty() || nombreEmpresaText.getText().isEmpty() || file == null) {
+            showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
+        } else {
+                GestorAerolineas gestorAerolineas = new GestorAerolineas();
+                Aerolinea aerolinea = obtenerAerolinea();
+                aerolinea.setLogo(new FileInputStream(file));
+                String mensaje = gestorAerolineas.insertarAerolinea(aerolinea);
+                if (mensaje.equals("La aerolínea fue registrada con éxito.")) {
+                    showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
                     resetearValores();
+                    cargarListaAerolineas();
                 } else {
-                    showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                    showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
                 }
             }
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","El campo nivel sólo acepta valores numéricos.");
-        }
-    }
-
-    /**
-     * Metodo para obtener los valores de una ubicacion en los TextField
-     * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
-     */
-    public void dobleClick(MouseEvent mouseEvent) {
-        try {
-        if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
-            Ubicacion ubicacion = (Ubicacion) listaUbicaciones.getSelectionModel().getSelectedItem();
-            codigoText.setText(ubicacion.getCodigo());
-            nivelText.setText(String.valueOf(ubicacion.getNivel()));
-        }
-        } catch (NullPointerException e){
-            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
-        }
-    }
-
-    /**
-     * Metodo para actualizar una ubicacion
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
-     */
-    public void actualizarUbicacion (ActionEvent actionEvent) {
-        try {
-            if(codigoText.getText().isEmpty() || nivelText.getText().isEmpty())
-            {
-                showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-            } else {
-                GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
-                Ubicacion ubicacion = obtenerUbicacion();
-                String mensaje = gestorUbicaciones.actualizarUbicacion(ubicacion);
-                if(mensaje.equals("La ubicación fue actualizada con éxito."))
-                {
-                    showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                    cargarListaUbicaciones();
-                } else {
-                    showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
-                }
-            }
-        } catch (NumberFormatException e) {
-        showAlert(Alert.AlertType.ERROR,"El campo sólo acepta valores numéricos.","El campo nivel sólo acepta valores numéricos.");
-        }
-    }
-
-    /**
-     * Metodo para eliminar una ubicacion
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
-     */
-    public void eliminarUbicacion (ActionEvent actionEvent) {
-        try {
-        GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
-        Ubicacion ubicacion = new Ubicacion();
-            if(listaUbicaciones.getSelectionModel().getSelectedItem() == null)
-            {
-                showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna ubicación.","No ha seleccionado ninguna ubicación.\nPor favor seleccione una ubicación para eliminar.");
-            } else {
-                ubicacion = (Ubicacion) listaUbicaciones.getSelectionModel().getSelectedItem();
-                if(gestorUbicaciones.tienePuertaAsignada(ubicacion)) {
-                    showAlert(Alert.AlertType.ERROR,"La ubicación tiene puertas asociadas.","La ubicación tiene puertas asociadas.\nPor favor elimine las puertas asociadas primero.");
-                } else {
-                    String mensaje = gestorUbicaciones.eliminarUbicacion(ubicacion);
-                    if(mensaje.equals("La ubicación fue eliminada con éxito."))
-                    {
-                        showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                        cargarListaUbicaciones();
-                    } else {
-                        showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
-                    }
-                }
-            }
-        } catch (NullPointerException e){
-            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
-        }
-    }
-
-    /**
-     * Metodo para obtener los datos de una ubicacion de los TextField
-     */
-    public Ubicacion obtenerUbicacion() {
-        String codigo = codigoText.getText();
-        int horaSalida = Integer.parseInt(nivelText.getText());
-        Ubicacion ubicacion = new Ubicacion(codigo, horaSalida);
-        return ubicacion;
-    }
-
-    /**
-     * Metodo para resetear los valores dem los TextField
-     */
-    public void resetearValores() {
-        cargarListaUbicaciones();
-        codigoText.setText("");
-        nivelText.setText("");
-    }
-
-    /**
-     * Metodo para actualizar el TableView de las ubicaciones
-     */
-    public void cargarListaUbicaciones(){
-        try {
-        GestorUbicaciones gestorUbicaciones = new GestorUbicaciones();
-        listaUbicaciones.getItems().clear();
-        observableUbicaciones = FXCollections.observableArrayList();
-        gestorUbicaciones.listarUbicaciones().forEach(ubicacion -> observableUbicaciones.addAll(ubicacion));
-        tCodigo.setCellValueFactory(new PropertyValueFactory<Ubicacion,String>("codigo"));
-        tNivel.setCellValueFactory(new PropertyValueFactory<Ubicacion,Integer>("nivel"));
-        listaUbicaciones.setItems(observableUbicaciones);
         } catch (Exception e){
             showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
         }
     }
 
     /**
-     * Metodo para inicializar el ObservableList y el TableView
+     * Metodo para cargar la iamgen para el logo de una aerolinea
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    @FXML
-    public void initialize()
-    {
+    public void cargarImagen(ActionEvent actionEvent) throws IOException {
         try {
-            cargarListaUbicaciones();
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extensionFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
+        FileChooser.ExtensionFilter extensionFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
+        fileChooser.getExtensionFilters().addAll(extensionFilterPNG, extensionFilterJPG);
+
+        file = fileChooser.showOpenDialog(null);
+        BufferedImage bufferedImage = ImageIO.read(file);
+        Image image = SwingFXUtils.toFXImage(bufferedImage,null);
+        logoIV.setImage(image);
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","No ha cargado ninguna imagen. Por favor cargue una imagen e intente de nuevo.");
+        }
+    }
+
+    /**
+     * Metodo para obtener los valores de una aerolinea en los TextField
+     * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
+     */
+    public void dobleClick(MouseEvent mouseEvent) throws IOException {
+        try {
+        if (mouseEvent.getClickCount() == 2) {
+            GestorAerolineas gestorAerolineas = new GestorAerolineas();
+            Aerolinea aerolinea = listaAerolineas.getSelectionModel().getSelectedItem();
+            cedulaText.setText(aerolinea.getCedulaJuridica());
+            nombreText.setText(aerolinea.getNombreComercial());
+            nombreEmpresaText.setText(aerolinea.getNombreEmpresaDuenna());
+            String cedulaJuridica = aerolinea.getCedulaJuridica();
+            Aerolinea aerolineaLogo = gestorAerolineas.buscarAerolinea(cedulaJuridica);
+            Image logo = new Image(aerolineaLogo.getLogo());
+            logoIV.setImage(logo);
+        }
+        } catch (NullPointerException e){
+                showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
+        }
+    }
+
+    /**
+     * Metodo para mostrar el logo de una aerolinea en el ImageView
+     * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
+     */
+    public void mostrarLogo(MouseEvent mouseEvent) throws IOException {
+        try {
+            if (mouseEvent.isPrimaryButtonDown()) {
+                GestorAerolineas gestorAerolineas = new GestorAerolineas();
+                Aerolinea aerolinea = listaAerolineas.getSelectionModel().getSelectedItem();
+                String cedulaJuridica = aerolinea.getCedulaJuridica();
+                Aerolinea aerolineaLogo = gestorAerolineas.buscarAerolinea(cedulaJuridica);
+                Image logo = new Image(aerolineaLogo.getLogo());
+                logoIV.setImage(logo);
+            }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
+        }
+    }
+
+    /**
+     * Metodo para actualizar una aerolinea
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void actualizarAerolinea (ActionEvent actionEvent) throws IOException {
+        try {
+        if(cedulaText.getText().isEmpty() || nombreText.getText().isEmpty() || nombreEmpresaText.getText().isEmpty())
+        {
+            showAlert(Alert.AlertType.ERROR,"Hay campos obligatorios sin llenar","Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
+        } else {
+            GestorAerolineas gestorAerolineas = new GestorAerolineas();
+            Aerolinea aerolinea = obtenerAerolinea();
+            String mensaje = gestorAerolineas.actualizarAerolinea(aerolinea);
+            if(mensaje.equals("La aerolínea fue actualizada con éxito."))
+            {
+                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                cargarListaAerolineas ();
+            } else {
+                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+            }
+        }
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
+    }
+
+    /**
+     * Metodo para actualizar el logo de una aerolinea
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void actualizarLogoAerolinea (ActionEvent actionEvent) throws IOException {
+        try {
+            if(listaAerolineas.getSelectionModel().getSelectedItem() == null)
+            {
+                showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna aerolínea para actualizar el logo.","No ha seleccionado ninguna aerolínea.\nPor favor seleccione una aerolínea para actualizar el logo.");
+            } else {
+            cargarImagen(actionEvent);
+            GestorAerolineas gestorAerolineas = new GestorAerolineas();
+            Aerolinea aerolinea = listaAerolineas.getSelectionModel().getSelectedItem();
+            aerolinea.setLogo(new FileInputStream(file));
+            String mensaje = gestorAerolineas.actualizarLogoAerolinea(aerolinea);
+            if(mensaje.equals("El logo de la aerolínea fue actualizado con éxito."))
+            {
+                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                cargarListaAerolineas ();
+                resetearValores();
+            } else {
+                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+            }
+            }
+        } catch (Exception e){
+            System.out.println("Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
+    }
+
+    /**
+     * Metodo para eliminar una aerolinea
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void eliminarAerolinea (ActionEvent actionEvent) {
+        try {
+        if(listaAerolineas.getSelectionModel().getSelectedItem() == null)
+        {
+            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna aerolínea.","No ha seleccionado ninguna aerolínea.\nPor favor seleccione una aerolínea para eliminar.");
+        } else {
+            GestorAerolineas gestorAerolineas = new GestorAerolineas();
+            Aerolinea aerolinea = (Aerolinea) listaAerolineas.getSelectionModel().getSelectedItem();
+            String mensaje = gestorAerolineas.eliminarAerolinea(aerolinea);
+            if(mensaje.equals("La aerolínea fue eliminada con éxito."))
+            {
+                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
+                cargarListaAerolineas();
+            } else {
+                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+            }
+        }
+        } catch (NullPointerException e){
+            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
+        }
+    }
+
+    /**
+     * Metodo para obtener los datos de una aerolinea de los TextField
+     */
+    public Aerolinea obtenerAerolinea() throws IOException {
+        String cedulaJuridica = cedulaText.getText();
+        String nombreComercial = nombreText.getText();
+        String nombreEmpresaDuenna = nombreEmpresaText.getText();
+        Aerolinea aerolinea = new Aerolinea(nombreComercial, cedulaJuridica, nombreEmpresaDuenna);
+        return aerolinea;
+    }
+
+    /**
+     * Metodo para resetear los valores de los TextField
+     */
+    public void resetearValores() {
+        cargarListaAerolineas();
+        cedulaText.setText("");
+        nombreText.setText("");
+        nombreEmpresaText.setText("");
+        logoIV.setImage(null);
+        file = null;
+    }
+
+    /**
+     * Metodo para actualizar el TableView de las aerolineas
+     */
+    public void cargarListaAerolineas () {
+        try {
+        GestorAerolineas gestorAerolineas = new GestorAerolineas();
+        listaAerolineas.getItems().clear();
+        observableAerolineas = FXCollections.observableArrayList();
+        gestorAerolineas.listarAerolineas().forEach(aerolinea -> observableAerolineas.addAll(aerolinea));
+        observableAerolineas = FXCollections.observableArrayList(gestorAerolineas.listarAerolineas());
+        tCedula.setCellValueFactory(new PropertyValueFactory<Aerolinea,Integer>("cedulaJuridica"));
+        tNombre.setCellValueFactory(new PropertyValueFactory<Aerolinea,String>("nombreComercial"));
+        tNombreEmpresa.setCellValueFactory(new PropertyValueFactory<Aerolinea,String>("nombreEmpresaDuenna"));
+        listaAerolineas.setItems(observableAerolineas);
+        } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
         }
     }
 
@@ -208,6 +282,18 @@ public class ControladorUbicacion {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.show();
+    }
+
+    /**
+     * Metodo para inicializar el ObservableList y el TableView
+     */
+    @FXML
+    public void initialize() {
+        try {
+            cargarListaAerolineas ();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     /**

@@ -52,6 +52,11 @@
                   <Font size="10.0" />
                </font>
             </Button>
+            <Button mnemonicParsing="false" onAction="#aerolineas" text="Aerolíneas">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
             <Button mnemonicParsing="false" text="Vuelos">
                <font>
                   <Font size="10.0" />

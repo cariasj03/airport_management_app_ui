@@ -27,7 +27,7 @@ public class UI extends Application {
      */
     public void start(Stage stage) throws Exception {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Inicio.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Login.fxml")));
             Image icon = new Image("icon.png");
             stage.getIcons().add(icon);
             stage.setTitle("Sistema de Gestión de Aeropuertos");
