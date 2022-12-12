@@ -136,19 +136,22 @@ public class ControladorAeropuerto {
      */
     public void eliminarAeropuerto (ActionEvent actionEvent) {
         try {
+            GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
+            Aeropuerto aeropuerto = (Aeropuerto) listaAeropuertos.getSelectionModel().getSelectedItem();
         if(listaAeropuertos.getSelectionModel().getSelectedItem() == null)
         {
             showAlert(Alert.AlertType.ERROR,"No ha seleccionado ningún aeropuerto.","No ha seleccionado ningún aeropuerto.\nPor favor seleccione un aeropuerto para eliminar.");
         } else {
-            GestorAeropuertos gestorAeropuertos = new GestorAeropuertos();
-            Aeropuerto aeropuerto = (Aeropuerto) listaAeropuertos.getSelectionModel().getSelectedItem();
-            String mensaje = gestorAeropuertos.eliminarAeropuerto(aeropuerto);
-            if(mensaje.equals("El aeropuerto fue eliminado con éxito."))
-            {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAeropuertos();
+            if (gestorAeropuertos.tieneVuelosAsignados(aeropuerto)) {
+                showAlert(Alert.AlertType.ERROR, "El aeropuerto tiene vuelos asociados.", "El aeropuerto tiene vuelos asociados.\nPor favor elimine los vuelos asociados primero.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                String mensaje = gestorAeropuertos.eliminarAeropuerto(aeropuerto);
+                if (mensaje.equals("El aeropuerto fue eliminado con éxito.")) {
+                    showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
+                    cargarListaAeropuertos();
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
+                }
             }
         }
         } catch (NullPointerException e){
@@ -420,6 +423,23 @@ public class ControladorAeropuerto {
         root = loader.load();
         ControladorPuerta controladorPuerta = loader.getController();
         controladorPuerta.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de perfil
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void perfil (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Perfil.fxml"));
+        root = loader.load();
+        ControladorPerfil controladorPerfil = loader.getController();
+        controladorPerfil.setPersonaSesion(personaSesion);
+        controladorPerfil.cargarDatosPersona();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

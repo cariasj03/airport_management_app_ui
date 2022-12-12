@@ -133,21 +133,24 @@ public class ControladorPuerta {
      */
     public void eliminarPuerta (ActionEvent actionEvent) {
         try {
-        if(listaPuertas.getSelectionModel().getSelectedItem() == null)
-        {
-            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna puerta.","No ha seleccionado ninguna puerta.\nPor favor seleccione una puerta para eliminar.");
-        } else {
             GestorPuertas gestorPuertas = new GestorPuertas();
             Puerta puerta = (Puerta) listaPuertas.getSelectionModel().getSelectedItem();
-            String mensaje = gestorPuertas.eliminarPuerta(puerta);
-            if(mensaje.equals("La puerta fue eliminada con éxito."))
+            if(listaPuertas.getSelectionModel().getSelectedItem() == null)
             {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaPuertas();
+                showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna puerta.","No ha seleccionado ninguna puerta.\nPor favor seleccione una puerta para eliminar.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                if (gestorPuertas.tieneVuelosAsignados(puerta)) {
+                    showAlert(Alert.AlertType.ERROR, "La puerta tiene vuelos asociados.", "La puerta tiene vuelos asociados.\nPor favor elimine los vuelos asociados primero.");
+                } else {
+                    String mensaje = gestorPuertas.eliminarPuerta(puerta);
+                    if (mensaje.equals("La puerta fue eliminada con éxito.")) {
+                        showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
+                        cargarListaPuertas();
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
+                    }
+                }
             }
-        }
         } catch (NullPointerException e){
             showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
         }
@@ -423,6 +426,23 @@ public class ControladorPuerta {
         root = loader.load();
         ControladorPuerta controladorPuerta = loader.getController();
         controladorPuerta.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de perfil
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void perfil (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Perfil.fxml"));
+        root = loader.load();
+        ControladorPerfil controladorPerfil = loader.getController();
+        controladorPerfil.setPersonaSesion(personaSesion);
+        controladorPerfil.cargarDatosPersona();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -51,14 +53,6 @@ public class ControladorLogin {
         }
     }
 
-    public void iniciarSesionClick (ActionEvent actionEvent) throws IOException {
-        try {
-            iniciarSesion(actionEvent);
-        } catch (Exception e){
-            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
-        }
-    }
-
     private void cambiarPantalla(Persona tmpPersona, ActionEvent actionEvent){
         try {
             GestorPersonas gestorPersonas = new GestorPersonas();
@@ -76,7 +70,17 @@ public class ControladorLogin {
                     stage.setScene(scene);
                     stage.show();
                     break;
-                case 2:
+                case 2,3:
+                    FXMLLoader loaderUsuario = new FXMLLoader(getClass().getResource("InicioUsuario.fxml"));
+                    root = loaderUsuario.load();
+                    ControladorInicio controladorInicioUsuario = loaderUsuario.getController();
+                    controladorInicioUsuario.setPersonaSesion(tmpPersona);
+                    controladorInicioUsuario.mostrarNombrePersona();
+
+                    stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                    scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.show();
                     break;
             }
         } catch (Exception e) {
@@ -85,38 +89,6 @@ public class ControladorLogin {
             alert.showAndWait();
         }
     }
-
-    /**
-     * Metodo para obtener los valores de una persona en los TextField
-     * @param keyEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
-
-    public void iniciarSesionEnter(KeyEvent keyEvent) throws IOException {
-        if (keyEvent.getCode().equals(KeyCode.ENTER)) {
-            String id = idText.getText();
-            String contrasena = passField.getText();
-            Gestor gestor = new Gestor();
-
-            if(idText.getText().isEmpty() || passField.getText().isEmpty())
-            {
-                showAlert(Alert.AlertType.ERROR,"Debe ingresar todos los campos.","Debe ingresar tanto el usuario como la contraseña.\nPor favor ingréselos y vuelva a intentarlo.");
-                return;
-            } else {
-                Persona persona = new Persona(id, contrasena);
-                if(!gestor.loginPersona(persona)) {
-                    showAlert(Alert.AlertType.ERROR,"Credenciales incorrectas.","La identificación o contraseña ingresados son incorrectos.\nPor favor revíselos y vuelva a intentarlo.");
-                } else {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdministrador.fxml"));
-                    root = loader.load();
-
-                    stage = (Stage) ((Node) keyEvent.getSource()).getScene().getWindow();
-                    scene = new Scene(root);
-                    stage.setScene(scene);
-                    stage.show();
-                }
-            }
-        }
-    }
-    */
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

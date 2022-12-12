@@ -208,21 +208,24 @@ public class ControladorAerolinea {
      */
     public void eliminarAerolinea (ActionEvent actionEvent) {
         try {
-        if(listaAerolineas.getSelectionModel().getSelectedItem() == null)
-        {
-            showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna aerolínea.","No ha seleccionado ninguna aerolínea.\nPor favor seleccione una aerolínea para eliminar.");
-        } else {
             GestorAerolineas gestorAerolineas = new GestorAerolineas();
             Aerolinea aerolinea = (Aerolinea) listaAerolineas.getSelectionModel().getSelectedItem();
-            String mensaje = gestorAerolineas.eliminarAerolinea(aerolinea);
-            if(mensaje.equals("La aerolínea fue eliminada con éxito."))
+            if(listaAerolineas.getSelectionModel().getSelectedItem() == null)
             {
-                showAlert(Alert.AlertType.INFORMATION,"Atención.",mensaje);
-                cargarListaAerolineas();
+                showAlert(Alert.AlertType.ERROR,"No ha seleccionado ninguna aerolínea.","No ha seleccionado ninguna aerolínea.\nPor favor seleccione una aerolínea para eliminar.");
             } else {
-                showAlert(Alert.AlertType.ERROR,"Atención.",mensaje);
+                if (gestorAerolineas.tieneVuelosAsignados(aerolinea)) {
+                    showAlert(Alert.AlertType.ERROR, "La aerolínea tiene vuelos asociados.", "La aerolínea tiene vuelos asociados.\nPor favor elimine los vuelos asociados primero.");
+                } else {
+                    String mensaje = gestorAerolineas.eliminarAerolinea(aerolinea);
+                    if (mensaje.equals("La aerolínea fue eliminada con éxito.")) {
+                        showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
+                        cargarListaAerolineas();
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
+                    }
+                }
             }
-        }
         } catch (NullPointerException e){
             showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
         }
@@ -466,6 +469,23 @@ public class ControladorAerolinea {
         root = loader.load();
         ControladorPuerta controladorPuerta = loader.getController();
         controladorPuerta.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de perfil
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void perfil (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Perfil.fxml"));
+        root = loader.load();
+        ControladorPerfil controladorPerfil = loader.getController();
+        controladorPerfil.setPersonaSesion(personaSesion);
+        controladorPerfil.cargarDatosPersona();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);

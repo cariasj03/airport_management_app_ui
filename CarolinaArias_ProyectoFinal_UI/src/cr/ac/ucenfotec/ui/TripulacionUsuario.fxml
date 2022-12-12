@@ -15,7 +15,7 @@
    <children>
       <ToolBar prefHeight="39.0" prefWidth="802.0">
          <items>
-            <Button mnemonicParsing="false" onAction="#inicio" text="Inicio">
+            <Button mnemonicParsing="false" onAction="#inicioUsuario" text="Inicio">
                <font>
                   <Font size="10.0" />
                </font></Button>
@@ -24,10 +24,15 @@
                   <Font size="10.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#vuelos" text="Vuelos">
+            <Button mnemonicParsing="false" onAction="#vueloUsuario" text="Vuelos">
                <font>
                   <Font size="10.0" />
                </font></Button>
+            <Button mnemonicParsing="false" onAction="#perfilUsuario" prefHeight="21.0" prefWidth="52.0" text="Mi perfil">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
             <Button mnemonicParsing="false" onAction="#salir" text="Salir">
                <font>
                   <Font size="10.0" />

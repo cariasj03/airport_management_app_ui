@@ -35,7 +35,7 @@
             <Font size="17.0" />
          </font>
       </Label>
-      <Button layoutX="346.0" layoutY="389.0" mnemonicParsing="false" onAction="#iniciarSesionClick" text="Iniciar sesión">
+      <Button layoutX="346.0" layoutY="389.0" mnemonicParsing="false" onAction="#iniciarSesion" text="Iniciar sesión">
          <font>
             <Font size="15.0" />
          </font>

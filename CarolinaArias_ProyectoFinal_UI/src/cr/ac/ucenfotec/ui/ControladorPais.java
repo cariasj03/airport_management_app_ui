@@ -386,6 +386,23 @@ public class ControladorPais {
     }
 
     /**
+     * Metodo para ir a la pantalla de perfil
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void perfil (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Perfil.fxml"));
+        root = loader.load();
+        ControladorPerfil controladorPerfil = loader.getController();
+        controladorPerfil.setPersonaSesion(personaSesion);
+        controladorPerfil.cargarDatosPersona();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
      * Metodo para salir de la aplicacion
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */

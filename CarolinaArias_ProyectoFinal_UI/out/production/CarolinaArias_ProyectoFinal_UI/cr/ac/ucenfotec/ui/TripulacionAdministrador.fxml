@@ -63,6 +63,11 @@
                   <Font size="10.0" />
                </font>
             </Button>
+            <Button mnemonicParsing="false" onAction="#perfilAdmin" prefHeight="21.0" prefWidth="52.0" text="Mi perfil">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Button>
             <Button mnemonicParsing="false" onAction="#salir" text="Salir">
                <font>
                   <Font size="10.0" />

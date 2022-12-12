@@ -1,39 +1,36 @@
 package cr.ac.ucenfotec.ui;
 
-import cr.ac.ucenfotec.entidades.Persona;
-import cr.ac.ucenfotec.entidades.Usuario;
 import cr.ac.ucenfotec.entidades.Direccion;
+import cr.ac.ucenfotec.entidades.Persona;
 import cr.ac.ucenfotec.logica.GestorPersonas;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
+import javafx.scene.control.DatePicker;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
+import javafx.scene.control.*;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * @author Carolina Arias
  * @version 1.0
- * @since 03/12/2022
+ * @since 24/11/2022
  *
- * Esta clase se encarga de gestionar el formulario FXML de Usuarios
+ * Esta clase se encarga de gestionar el formulario FXML de Perfil
  */
 
-public class ControladorUsuario {
+public class ControladorPerfil {
     private Stage stage;
     private Scene scene;
     private Parent root;
-    public TextField idText;
+    public Label idLabel;
     public TextField nombreText;
     public TextField apellidosText;
     public TextField nacionalidadText;
@@ -50,24 +47,6 @@ public class ControladorUsuario {
     public TextField distritoText;
     public TextField detalleText;
     public PasswordField passField;
-    @FXML
-    TableView<Usuario> listaUsuarios;
-    @FXML
-    TableColumn<Usuario, String> tId;
-    @FXML
-    TableColumn<Usuario, String> tNombre;
-    @FXML
-    TableColumn<Usuario, String> tApellidos;
-    @FXML
-    TableColumn<Usuario, LocalDate> tFechaNac;
-    @FXML
-    TableColumn<Usuario, String> tGenero;
-    @FXML
-    TableColumn<Usuario, String> tNacionalidad;
-    @FXML
-    TableColumn<Usuario, String> tCorreo;
-    @FXML
-    public ObservableList<Usuario> observableUsuarios;
     private Persona personaSesion;
 
     //Getter y setter para la persona en sesion
@@ -79,21 +58,54 @@ public class ControladorUsuario {
     }
 
     /**
-     * Metodo para registrar un usuario
-     *
+     * Metodo para obtener los valores de la persona en la sesion en los TextField
+     */
+    public void cargarDatosPersona() {
+        try {
+            GestorPersonas gestorPersonas = new GestorPersonas();
+            Persona persona = gestorPersonas.buscarPersona(personaSesion.getId());
+                idLabel.setText(persona.getId());
+                nombreText.setText(persona.getNombre());
+                apellidosText.setText(persona.getApellidos());
+                nacionalidadText.setText(persona.getNacionalidad());
+                fechaNacDatePicker.setValue(persona.getFechaNacimiento());
+                correoText.setText(persona.getCorreoElectronico());
+                provinciaText.setText(persona.getDireccion().getProvincia());
+                cantonText.setText(persona.getDireccion().getCanton());
+                distritoText.setText(persona.getDireccion().getDistrito());
+                detalleText.setText(persona.getDireccion().getDetalleDireccion());
+                passField.setText(persona.getContrasena());
+                if (persona.getGenero().equals("F")) {
+                    femeninoRadio.setSelected(true);
+                } else {
+                    if (persona.getGenero().equals("M")) {
+                        masculinoRadio.setSelected(true);
+                    } else {
+                        if (persona.getGenero().equals("O")) {
+                            otroRadio.setSelected(true);
+                        }
+                    }
+                }
+            } catch (Exception e){
+            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
+        }
+    }
+
+    /**
+     * Metodo para actualizar los datos de la persona en la sesion
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void registrar(ActionEvent actionEvent) {
+    public void actualizarDatos(ActionEvent actionEvent) {
         try {
-            if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos obligatorios.");
+            if (nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
             } else {
                 GestorPersonas gestorPersonas = new GestorPersonas();
-                Usuario usuario = obtenerUsuario();
-                String mensaje = gestorPersonas.insertarUsuario(usuario);
-                if (mensaje.equals("El usuario fue creado con éxito.")) {
+                Persona persona = obtenerPersona();
+                String mensaje = gestorPersonas.actualizarPersona(persona);
+                if (mensaje.equals("Los datos del perfil fueron actualizados con éxito.")) {
                     showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
-                    resetearValores();
+                    cargarDatosPersona();
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
                 }
@@ -104,96 +116,10 @@ public class ControladorUsuario {
     }
 
     /**
-     * Metodo para obtener los valores de un usuario en los TextField
-     *
-     * @param mouseEvent es de tipo MouseEvent representa algun tipo de accion realizada por el mouse
+     * Metodo para obtener los datos de la persona de los TextField
      */
-    public void dobleClick(MouseEvent mouseEvent) {
-        try {
-        if (mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2) {
-            Usuario usuario = (Usuario) listaUsuarios.getSelectionModel().getSelectedItem();
-            idText.setText(usuario.getId());
-            nombreText.setText(usuario.getNombre());
-            apellidosText.setText(usuario.getApellidos());
-            nacionalidadText.setText(usuario.getNacionalidad());
-            fechaNacDatePicker.setValue(usuario.getFechaNacimiento());
-            correoText.setText(usuario.getCorreoElectronico());
-            provinciaText.setText(usuario.getDireccion().getProvincia());
-            cantonText.setText(usuario.getDireccion().getCanton());
-            distritoText.setText(usuario.getDireccion().getDistrito());
-            detalleText.setText(usuario.getDireccion().getDetalleDireccion());
-            passField.setText(usuario.getContrasena());
-            if (usuario.getGenero().equals("F")) {
-                femeninoRadio.setSelected(true);
-            } else {
-                if (usuario.getGenero().equals("M")) {
-                    masculinoRadio.setSelected(true);
-                } else {
-                    if (usuario.getGenero().equals("O")) {
-                        otroRadio.setSelected(true);
-                    }
-                }
-            }
-        }
-        } catch (NullPointerException e){
-            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
-        }
-    }
-
-    /**
-     * Metodo para actualizar un usuario
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
-     */
-    public void actualizarUsuario(ActionEvent actionEvent) {
-        try {
-        if (idText.getText().isEmpty() || nombreText.getText().isEmpty() || apellidosText.getText().isEmpty() || nacionalidadText.getText().isEmpty() || correoText.getText().isEmpty() || provinciaText.getText().isEmpty() || cantonText.getText().isEmpty() || distritoText.getText().isEmpty() || detalleText.getText().isEmpty() || fechaNacDatePicker.getValue() == null || obtenerGenero().equals("N") || passField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Hay campos obligatorios sin llenar", "Hay campos obligatorios sin llenar.\nPor favor llene todos los campos\nobligatorios.");
-        } else {
-            GestorPersonas gestorPersonas = new GestorPersonas();
-            Usuario usuario = obtenerUsuario();
-            String mensaje = gestorPersonas.actualizarUsuario(usuario);
-            if (mensaje.equals("El usuario fue actualizado con éxito.")) {
-                showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
-                cargarListaUsuarios();
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
-            }
-        }
-        } catch (DateTimeParseException dfe) {
-            showAlert(Alert.AlertType.ERROR,"La fecha no tiene un formato adecuado.","La fecha no tiene un formato adecuado.\nPor favor digítela con el formato adecuado.");
-        }
-    }
-
-    /**
-     * Metodo para eliminar un usuario
-     *
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
-     */
-    public void eliminarUsuario(ActionEvent actionEvent) {
-        try {
-        if (listaUsuarios.getSelectionModel().getSelectedItem() == null) {
-            showAlert(Alert.AlertType.ERROR, "No ha seleccionado ningún usuario.", "No ha seleccionado ningún usuario.\nPor favor seleccione un usuario para eliminar.");
-        } else {
-            GestorPersonas gestorPersonas = new GestorPersonas();
-            Usuario usuario = (Usuario) listaUsuarios.getSelectionModel().getSelectedItem();
-            String mensaje = gestorPersonas.eliminarUsuario(usuario);
-            if (mensaje.equals("El usuario fue eliminado con éxito.")) {
-                showAlert(Alert.AlertType.INFORMATION, "Atención.", mensaje);
-                cargarListaUsuarios();
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Atención.", mensaje);
-            }
-        }
-        } catch (NullPointerException e){
-            showAlert(Alert.AlertType.ERROR,"Atención.","No se obtuvieron datos, por favor haga click en una línea que no esté vacía.");
-        }
-    }
-
-    /**
-     * Metodo para obtener los datos de un usuario de los TextField
-     */
-    public Usuario obtenerUsuario() {
-        String id = idText.getText();
+    public Persona obtenerPersona() {
+        String id = idLabel.getText();
         String nombre = nombreText.getText();
         String apellidos = apellidosText.getText();
         String nacionalidad = nacionalidadText.getText();
@@ -209,55 +135,12 @@ public class ControladorUsuario {
         String detalle = detalleText.getText();
         String contrasena = passField.getText();
         Direccion direccion = new Direccion(provincia, canton, distrito, detalle);
-        Usuario usuario = new Usuario(id, nombre, apellidos, nacionalidad, fechaNacimiento, edad, genero, correo, direccion, contrasena);
-        return usuario;
+        Persona persona = new Persona(id, nombre, apellidos, nacionalidad, fechaNacimiento, edad, genero, correo, direccion, contrasena);
+        return persona;
     }
 
     /**
-     * Metodo para actualizar el TableView de los usuarios
-     */
-    public void cargarListaUsuarios () {
-        try {
-        GestorPersonas gestorPersonas = new GestorPersonas();
-        listaUsuarios.getItems().clear();
-        observableUsuarios = FXCollections.observableArrayList();
-        gestorPersonas.listarUsuarios().forEach(usuario -> observableUsuarios.addAll(usuario));
-        tId.setCellValueFactory(new PropertyValueFactory<Usuario,String>("id"));
-        tNombre.setCellValueFactory(new PropertyValueFactory<Usuario,String>("nombre"));
-        tApellidos.setCellValueFactory(new PropertyValueFactory<Usuario,String>("apellidos"));
-        tFechaNac.setCellValueFactory(new PropertyValueFactory<Usuario, LocalDate>("fechaNacimiento"));
-        tGenero.setCellValueFactory(new PropertyValueFactory<Usuario,String>("genero"));
-        tNacionalidad.setCellValueFactory(new PropertyValueFactory<Usuario,String>("nacionalidad"));
-        tCorreo.setCellValueFactory(new PropertyValueFactory<Usuario,String>("correoElectronico"));
-        listaUsuarios.setItems(observableUsuarios);
-        } catch (Exception e){
-            showAlert(Alert.AlertType.ERROR,"Error.","Ha ocurrido un error, por favor inténtelo de nuevo.");
-        }
-    }
-
-    /**
-     * Metodo para resetear los valores dem los TextField
-     */
-    public void resetearValores() {
-        cargarListaUsuarios ();
-        idText.setText("");
-        nombreText.setText("");
-        apellidosText.setText("");
-        nacionalidadText.setText("");
-        fechaNacDatePicker.setValue(null);
-        femeninoRadio.setSelected(false);
-        masculinoRadio.setSelected(false);
-        otroRadio.setSelected(false);
-        correoText.setText("");
-        provinciaText.setText("");
-        cantonText.setText("");
-        distritoText.setText("");
-        detalleText.setText("");
-        passField.setText("");
-    }
-
-    /**
-     * Metodo para obtener el genero del usuario de los RadioButton
+     * Metodo para obtener el genero del persona de los RadioButton
      */
     public String obtenerGenero (){
         String genero = "";
@@ -294,24 +177,28 @@ public class ControladorUsuario {
     }
 
     /**
-     * Metodo para inicializar el ObservableList y el TableView
+     * Metodo para ir a la pantalla de inicio para administradores
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    @FXML
-    public void initialize()
-    {
-        try {
-            cargarListaUsuarios ();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+    public void inicio (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdmin.fxml"));
+        root = loader.load();
+        ControladorInicio controladorInicio = loader.getController();
+        controladorInicio.setPersonaSesion(personaSesion);
+        controladorInicio.mostrarNombrePersona();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
     /**
      * Metodo para ir a la pantalla de inicio para administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void inicio (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdmin.fxml"));
+    public void inicioUsuario (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioUsuario.fxml"));
         root = loader.load();
         ControladorInicio controladorInicio = loader.getController();
         controladorInicio.setPersonaSesion(personaSesion);
@@ -375,8 +262,24 @@ public class ControladorUsuario {
      * Metodo para ir a la pantalla de tripulaciones
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void tripulaciones (ActionEvent actionEvent) throws IOException {
+    public void tripulacionAdministrador (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionAdministrador.fxml"));
+        root = loader.load();
+        ControladorTripulacion controladorTripulacion = loader.getController();
+        controladorTripulacion.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de tripulaciones
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void tripulacionUsuario (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionUsuario.fxml"));
         root = loader.load();
         ControladorTripulacion controladorTripulacion = loader.getController();
         controladorTripulacion.setPersonaSesion(personaSesion);
@@ -439,8 +342,24 @@ public class ControladorUsuario {
      * Metodo para ir a la pantalla de vuelos
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
-    public void vuelos (ActionEvent actionEvent) throws IOException {
+    public void vueloAdministrador (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("VueloAdministrador.fxml"));
+        root = loader.load();
+        ControladorVuelo controladorVuelo = loader.getController();
+        controladorVuelo.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de vuelos
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void vueloUsuario (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("VueloUsuario.fxml"));
         root = loader.load();
         ControladorVuelo controladorVuelo = loader.getController();
         controladorVuelo.setPersonaSesion(personaSesion);
@@ -484,23 +403,6 @@ public class ControladorUsuario {
     }
 
     /**
-     * Metodo para ir a la pantalla de perfil
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
-     */
-    public void perfil (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Perfil.fxml"));
-        root = loader.load();
-        ControladorPerfil controladorPerfil = loader.getController();
-        controladorPerfil.setPersonaSesion(personaSesion);
-        controladorPerfil.cargarDatosPersona();
-
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    /**
      * Metodo para salir de la aplicacion
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
@@ -508,3 +410,4 @@ public class ControladorUsuario {
         ((Stage)(((Button)actionEvent.getSource()).getScene().getWindow())).close();
     }
 }
+

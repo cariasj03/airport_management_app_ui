@@ -40,23 +40,6 @@ public class ControladorInicio {
     }
 
     /**
-     * Metodo para ir a la pantalla de inicio para administradores
-     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
-     */
-    public void inicioAdministrador (ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("InicioAdmin.fxml"));
-        root = loader.load();
-        ControladorInicio controladorInicio = loader.getController();
-        controladorInicio.setPersonaSesion(personaSesion);
-        controladorInicio.mostrarNombrePersona();
-
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    /**
      * Metodo para ir a la pantalla de administradores
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
@@ -110,6 +93,22 @@ public class ControladorInicio {
      */
     public void tripulacionAdministrador (ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionAdministrador.fxml"));
+        root = loader.load();
+        ControladorTripulacion controladorTripulacion = loader.getController();
+        controladorTripulacion.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de tripulaciones
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void tripulacionUsuario (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("TripulacionUsuario.fxml"));
         root = loader.load();
         ControladorTripulacion controladorTripulacion = loader.getController();
         controladorTripulacion.setPersonaSesion(personaSesion);
@@ -185,6 +184,22 @@ public class ControladorInicio {
     }
 
     /**
+     * Metodo para ir a la pantalla de vuelos
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void vueloUsuario (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("VueloUsuario.fxml"));
+        root = loader.load();
+        ControladorVuelo controladorVuelo = loader.getController();
+        controladorVuelo.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
      * Metodo para ir a la pantalla de ubicaciones
      * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
      */
@@ -209,6 +224,40 @@ public class ControladorInicio {
         root = loader.load();
         ControladorPuerta controladorPuerta = loader.getController();
         controladorPuerta.setPersonaSesion(personaSesion);
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de perfil
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void perfilAdmin (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Perfil.fxml"));
+        root = loader.load();
+        ControladorPerfil controladorPerfil = loader.getController();
+        controladorPerfil.setPersonaSesion(personaSesion);
+        controladorPerfil.cargarDatosPersona();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Metodo para ir a la pantalla de perfil
+     * @param actionEvent es de tipo ActionEvent representa algun tipo de accion realizada
+     */
+    public void perfilUsuario (ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("PerfilUsuario.fxml"));
+        root = loader.load();
+        ControladorPerfil controladorPerfil = loader.getController();
+        controladorPerfil.setPersonaSesion(personaSesion);
+        controladorPerfil.cargarDatosPersona();
 
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
