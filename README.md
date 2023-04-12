@@ -1,5 +1,7 @@
 # Airport Management Desktop App
 This is the GUI part of a desktop application built using Java and SQL Server for managing various aspects of airport operations, such as airlines, gates, flights, passenger management, and staff management.
+To see the BL part, follow this link:
+https://github.com/cariasj03/airport_management_app_bl
 
 # Features
 • Flight scheduling: Allows users to create, view, update, and delete flight schedules, including details such as departure and arrival times, destinations, and aircraft information.
